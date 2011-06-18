@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>Tesm</title>
+<script src="jquery-bundle.js"></script>
+<script src="script/soundmanager2-jsmin.js"></script>
+<script>
+    soundManager.url = '/d/s/swf/';
+    soundManager.flashVersion = 8; // optional: shiny features (default = 8)
+    soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
+    // enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
+    soundManager.useHTML5Audio = true;
+    soundManager.debugMode = true;
+
+    var soundPos = null;
+    soundManager.onready(function() {
+       var thisSound = soundManager.createSound({
+           id: 'scorpion',
+           url: '/d/s/04_Wind_Of_Change.mp3',
+           autoLoad: true,
+           autoPlay: false,
+           debugMode: false,
+           onload: function() {
+               var that = this;
+               soundPos = $('#pos');
+               $('#loading').hide();
+               $('#controls').append($('<a>Start</a>'));
+               $('#controls a').click(function() {
+                   that.play();
+               });
+           },
+           whileloading: function() {
+               $("#loading-status").text('sound '+this.sID+' loading, '+this.bytesLoaded+' of '+this.bytesTotal);
+           },
+           whileplaying: function() {
+               soundPos.text("" + this.position);
+           },
+           volume: 100
+       });
+       
+       // Ready to use; soundManager.createSound() etc. can now be called.
+    });
+</script>
+<style type="text/css">
+#loading { text-decoration: blink; }
+</style>
+</head>
+<body>
+<div id="pos"></div>
+<div id="loading">Loading</div>
+<div id="loading-status">Loading</div>
+<div id="controls"></div>
+</body>
+</html>
