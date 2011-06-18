@@ -3,16 +3,18 @@ slideshow = {
     init : function() {
 		this.createCanvas();
 		this.createImages();
-		this.createFakeBeats();
+		//this.createFakeBeats();
+        this.beats = [193, 1693, 3195, 4691, 6188, 7692, 9195, 10692, 12191, 13694, 15197, 16693, 18193, 19696, 21200, 22699, 24199, 25701, 27198, 28696, 30199, 31698, 33198, 34696, 36200, 37708, 39199, 40698, 42197, 43701, 45198, 46700, 48196, 49699, 51199, 52696, 54196, 55699, 57195, 58696, 60199, 61701, 63199, 64696, 66198, 67703, 69203, 70732, 72205, 73693, 75198, 76701, 78192, 79695, 81199, 82695, 84192, 85689, 87191, 88694, 90191, 91695, 93196, 94694, 96193, 97697, 99196, 100698, 102199, 103695, 105198, 106702, 108203, 109702, 111198, 112699, 114200, 115697, 117191, 118692, 120196, 121699, 123200, 124699, 126197, 127694, 129194, 130695, 132197, 133693, 135263, 136989, 138580, 140078, 141576, 143077, 144575, 146076, 147573, 149070, 150570, 152075, 153578, 155076, 156577, 158077, 159573, 161073, 162572, 164067, 165571, 167068, 168566, 170069, 171574, 173084, 174588, 176078, 177576, 179072, 180571, 182069, 183569, 185070, 186574, 188073, 189581, 191077, 192568, 194065, 195571, 197068, 198565, 200065, 201568, 203072, 204567, 206070, 207570, 209067, 210566, 212069, 213566, 215065, 216561, 218071, 219574, 221073, 222571, 224079, 225572, 227068, 228566, 230063, 231569, 233069, 234567, 236068, 237570, 239069, 240568, 242070, 243568, 245071, 246572, 248070, 249571, 251076, 252574, 254074, 255576, 257069, 258571, 260070, 261572, 263070, 264568, 266068, 267572, 269073, 270572, 272069, 273565, 275065, 276565, 278066, 279575, 281073, 282577, 284072, 285576, 287071, 288572, 290070, 291568, 293069, 294571, 296076, 297571, 299070, 300566, 302068, 303571, 305068, 306570, 308078, 309581, 311074, 312573, 314068, 315566, 317064, 318563, 320065, 321564, 323064, 324567, 326061, 327564, 329062, 330574, 332076, 333573, 335073, 336572, 338073, 339563, 341070, 342571, 344067, 345564, 347068, 348566, 350065, 351576, 353072, 354566, 356064, 357565, 359070, 360566, 362065, 363562, 365066, 366568, 368067, 369565, 371067, 372564, 374067, 375564, 377055, 378549, 380060, 381560, 383061, 384564, 386066, 387568, 389069, 390569, 392059, 393562, 395065, 396565, 398067, 399571, 401068, 402567, 404069, 405572, 407068, 408568, 410069, 411569, 413065, 414561, 416065, 417568, 419067, 420570, 422067, 423564, 425069, 426567, 428064, 429566, 431068, 432603, 434075, 435539];
 
         this.createPlayer();		
+        this.createFileManager();        
 		
 		// Animation time since start in ms
 		this.clock = this.lastClock = 0;
 
         // Visual dimensions of output
 		this.width = this.height = 400;
-		
+	
 	},	
 		
 	createCanvas : function() {
@@ -24,7 +26,6 @@ slideshow = {
 	createImages : function() {
    
         var targets = [
-		  "/static/images/asikainen.png",
 		  "/static/images/kakku.png"
 		];
 			
@@ -59,7 +60,7 @@ slideshow = {
 		
 		this.beats = [];
 		
-		var step = 60/90*1000;
+		var step = 120/60*1000;
 		
 		var i;
 		var clock = 0;
@@ -78,10 +79,14 @@ slideshow = {
 		this.player.start($.proxy(this.onClock, this));
 	},
 	
+    createFileManager : function() {
+        this.fileManager = filemanager;
+        this.fileManager.init();
+    },
+    		
 	prepareTick : function() {
-        setTimeout($.proxy(this.tick, this), 100);
+        setTimeout($.proxy(this.tick, this), 50);
 	},
-	
 	
 	loop : function() {
 	   console.log("Entering animation loop");
@@ -94,7 +99,7 @@ slideshow = {
 	 * @param {Object} time
 	 */
 	onClock : function(time) {
-		console.log("Got clock:" + time);
+		//console.log("Got clock:" + time);
 		 this.clock = time;
 	},
 	
@@ -197,7 +202,7 @@ slideshow = {
 		var w = image.width*scale;
 		var h = image.height*scale;
 
-        console.log("Drawing:" + x + " w:" + w);        
+        //console.log("Drawing:" + x + " w:" + w);        
 
         ctx.drawImage(image, 0, x, w, h);
 
@@ -225,7 +230,7 @@ player = {
 	    soundManager.onready(function(){
 			var thisSound = soundManager.createSound({
 				id: 'slideshow',
-				url: 'static/music/ume.mp3',
+				url: 'static/music/flautin.mp3',
 				autoLoad: true,
 				autoPlay: false,
 				debugMode: false,
@@ -255,6 +260,38 @@ player = {
 					
 	}
 	
+};
+
+
+filemanager = {
+	
+	init : function() {
+	  var dropZone = document.getElementById('drop_zone');
+	  //dropZone.addEventListener('dragover', this.handleDragOver, false);
+	  //dropZone.addEventListener('drop', handleFileSelect, false);
+	},
+
+	  handleFileSelect : function (evt) {
+	    evt.stopPropagation();
+	    evt.preventDefault();
+	
+	    var files = evt.dataTransfer.files; // FileList object.
+	
+	    // files is a FileList of File objects. List some properties.
+	    var output = [];
+	    for (var i = 0, f; f = files[i]; i++) {
+	      output.push('<li><strong>', f.name, '</strong> (', f.type || 'n/a', ') - ',
+	                  f.size, ' bytes, last modified: ',
+	                  f.lastModifiedDate.toLocaleDateString(), '</li>');
+	    }
+	    document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+	  },
+	
+	  handleDragOver : function(evt) {
+	    evt.stopPropagation();
+	    evt.preventDefault();
+	  }
+
 };
 
 $(document).ready($.proxy(slideshow.init, slideshow));

@@ -37,6 +37,9 @@
     <div id="bottom">
     	
       <div class="bottom">
+
+        <div id="drop_zone">Drop j00r filez h3r3</div>
+        <output id="list"></output>
 	
 	   <p>Timer: <span id="pos">:D</span></p>
 	   	
@@ -45,6 +48,7 @@
 		<canvas id=slideshow width=400 height=400>
 		  	
 		</canvas>
+		
 		
       </div>
     </div>
