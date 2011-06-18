@@ -30,9 +30,11 @@ Enter development server
 Music
 -------
 
-CC, Licensed by Emerald Park 
+CC Licensed 
 
 * http://www.jamendo.com/en/artist/Emerald_Park
+
+* http://www.jamendo.com/en/artist/manguer
 
 Sources
 --------

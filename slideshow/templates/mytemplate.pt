@@ -12,7 +12,8 @@
   <link rel="stylesheet" href="${request.static_url('slideshow:static/ie6.css')}" type="text/css" media="screen" charset="utf-8" />
   <![endif]-->
 
-  <script type="text/javascript" src="${request.static_url('slideshow:static/jquery-1.5.min.js')}"></script>  
+  <script type="text/javascript" src="${request.static_url('slideshow:static/jquery-1.5.min.js')}"></script>
+  <script src="${request.static_url('slideshow:static/js/soundmanager2-jsmin.js')}"></script>  
   <script type="text/javascript" src="${request.static_url('slideshow:static/slideshow.js')}"></script>
 
 </head>
@@ -32,8 +33,15 @@
         </p>
       </div>
     </div>
+	
     <div id="bottom">
+    	
       <div class="bottom">
+	
+	   <p>Timer: <span id="pos">:D</span></p>
+	   	
+		<p id="controls"></p>
+		  	
 		<canvas id=slideshow width=400 height=400>
 		  	
 		</canvas>

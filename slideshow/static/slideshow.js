@@ -8,7 +8,7 @@ slideshow = {
         this.createPlayer();		
 		
 		// Animation time since start in ms
-		this.clock = 0;
+		this.clock = this.lastClock = 0;
 
         // Visual dimensions of output
 		this.width = this.height = 400;
@@ -72,12 +72,11 @@ slideshow = {
 		console.log("Got beats:" + this.beats);
 	},
 	
-	
 	createPlayer : function() {
 		this.player = player;
-		player.init();
-		player.start();
-	}
+		this.player.init();
+		this.player.start($.proxy(this.onClock, this));
+	},
 	
 	prepareTick : function() {
         setTimeout($.proxy(this.tick, this), 100);
@@ -89,12 +88,25 @@ slideshow = {
 	   this.prepareTick();	
 	},
 	
-	tick : function() {
-		
-	  var delta = 100;
-	  this.clock += 100;	  
+	/**
+	 * Clock callback from audio
+	 * 
+	 * @param {Object} time
+	 */
+	onClock : function(time) {
+		console.log("Got clock:" + time);
+		 this.clock = time;
+	},
+	
+	tick : function() {		
+	  var delta = this.clock - this.lastClock;
+	  this.lastClock = this.clock;
+	  //this.clock += 
 	  this.animate(delta, this.clock); 
 	  this.prepareTick();
+	  
+	  $("#pos").text(this.clock);
+	  
 	},
 	
 	/**
@@ -193,64 +205,57 @@ slideshow = {
 	
 };
 
-player : {
+player = {
 		
 	init : function() {
 		this.soundPos = 0;		
 	},
 	
-	getTime : function() {
-		return this.soundPos;
-	},
-	
-	start : function() {
+	start : function(clockCallback) {
 		
-	    soundManager.url = 'swf/';
+	    soundManager.url = 'static/swf/';
 	    soundManager.flashVersion = 8; // optional: shiny features (default = 8)
 	    soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
 	    // enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
 	    soundManager.useHTML5Audio = true;
-	    soundManager.debugMode = true;
+	    soundManager.debugMode = false;
 	
 	    var self = this; 
 		    
-	    soundManager.onready(function() {
-	       var thisSound = soundManager.createSound({
-	           id: 'slideshow',
-	           url: 'static/music/song1.mp3',
-	           autoLoad: true,
-	           autoPlay: false,
-	           debugMode: false,
-
-	           onload: function() {
-	               var that = this;
-	               
-				   self.soundPos = $('#pos');
-				   
-	               $('#loading').hide();
-	               $('#controls').append($('<a>Start</a>'));
-	               $('#controls a').click(function() {
-	                   that.play();
-	               });
-	           },
-
-	           whileloading: function() {
-	               $("#loading-status").text('sound '+this.sID+' loading, '+this.bytesLoaded+' of '+this.bytesTotal);
-	           },
-
-	           whileplaying: function() {
-			   	   self.soundPos = this.position;
-	               //soundPos.text("" + this.position);
-	           },
-
-	           volume: 100
-	       });
-	       
-	       // Ready to use; soundManager.createSound() etc. can now be called.		
+	    soundManager.onready(function(){
+			var thisSound = soundManager.createSound({
+				id: 'slideshow',
+				url: 'static/music/ume.mp3',
+				autoLoad: true,
+				autoPlay: false,
+				debugMode: false,
+				
+				onload: function(){
+					var that = this;
+					
+					$('#loading').hide();
+					$('#controls').append($('<a>Start</a>'));
+					$('#controls a').click(function(){
+						that.play();
+					});
+				},
+				
+				whileloading: function(){
+				},
+				
+				whileplaying: function(){
+					clockCallback(this.position);
+					self.soundPos = this.position;
+				},
+				
+				volume: 100
+			});
+		});
+	   // Ready to use; soundManager.createSound() etc. can now be called.		
 					
 	}
 	
-}
+};
 
 $(document).ready($.proxy(slideshow.init, slideshow));
 
