@@ -1,5 +1,3 @@
-Campus location project.
-
 Bootstrapping
 -----------------
 
