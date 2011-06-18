@@ -4,7 +4,7 @@
 <script src="jquery-bundle.js"></script>
 <script src="script/soundmanager2-jsmin.js"></script>
 <script>
-    soundManager.url = '/d/s/swf/';
+    soundManager.url = 'swf/';
     soundManager.flashVersion = 8; // optional: shiny features (default = 8)
     soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
     // enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
@@ -15,7 +15,7 @@
     soundManager.onready(function() {
        var thisSound = soundManager.createSound({
            id: 'scorpion',
-           url: '/d/s/04_Wind_Of_Change.mp3',
+           url: 'mp3/song1.mp3',
            autoLoad: true,
            autoPlay: false,
            debugMode: false,
