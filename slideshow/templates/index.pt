@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+    <title>Slideshow</title>
+    <link rel="stylesheet"  href="media/jquery.mobile/jquery.mobile-1.0a4.1.css"/>
+ 
+    <script type="text/javascript" src="media/jquery-1.5.min.js"></script>
+    <script type="text/javascript" src="media/jquery.mobile/jquery.mobile-1.0a4.1.js"></script>
+
+    <script type="text/javascript" src="media/jquery.tmpl.min.js"></script>
+
+    <script type="text/javascript" src="${request.static_url('slideshow:static/slideshow.js')}"></script>
+
+</head> 
+<body> 
+<div data-role="page" data-theme="b" id="korppi-home">
+    <div data-role="header" id="korppi-homeheader">
+        <h1>Korppi - mobiilikartasto</h1>
+    </div>
+    
+    <select id="area-selection">
+        <option name="empty">Valitse kampus</option>
+    </select>
+    
+    <img id="geolocation-indicator" style="display: none" src="media/ajax-loader.gif" />
+        
+    <div id="content" data-role="content">
+        <ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="b">            
+            <!-- li data-role="list-divider"></li-->
+            <li><a href="#korppi-help">Ohjeet</a></li>
+        </ul>
+
+    </div>
+</div>
+<div data-role="page" data-theme="b" id="korppi-help">
+    <div data-role="header" id="korppi-helpheader">
+        <h1>Korppi - ohjeet</h1>
+        <p><a data-role="back" href="#korppi-home"></a></p>
+    </div>
+    
+    <div data-role="content">
+        <p>Tilan haku tapahtuu syöttämällä merkkijonon hakukenttään ja suorittamalla haku "Hae"-painikkeella. Jos tiloja löytyi monta, sovellus esittää linkin, josta käyttäjä voi tarkistella hakutuloksia paremmin listasta. Jos taas tiloja ei löydy, ilmoitetaan se käyttäjälle.
+        Jos tilaa haettaessa löytyy yksi tila, käyttäjän näkymä kohdistetaan löytyneeseen tilaan. Tämän jälkeen kartalla liikkuessa käyttäjälle jätetään mahdollisuus kohdistaa edellinen haettu tila "kohdista"-linkin avulla.Tällöin käyttäjän näkymä viedään takaisin haetun tilan kohdalle.
+        Tilojen väritykset kartoilla ovat seuraavat : normaalit tilat, haetut/kohdistetut tilat.</p>
+    </div>
+</div>
+</body>
+</html>
