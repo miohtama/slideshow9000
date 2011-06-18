@@ -27,6 +27,13 @@ Enter development server
     http://127.0.0.1:6543/
 
 
+Music
+-------
+
+CC, Licensed by Emerald Park 
+
+* http://www.jamendo.com/en/artist/Emerald_Park
+
 Sources
 --------
 
