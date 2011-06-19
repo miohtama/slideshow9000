@@ -65,31 +65,27 @@
 			<span class="blinky">&lt; &lt; &lt;</span>			
 		</div>
 	</div>
-	
-	
-    <div id="bottom">
-    	
-      <div class="bottom">
 
-        <div id="drop_zone">Drop j00r filez h3r3</div>
-        <output id="list"></output>
-	
-	   <p>Timer: <span id="pos">:D</span></p>
-	   	
-		<p id="controls"></p>
-		  	
+    <div id="preview-controls" class="controls">
+	    <a name="preview"><!-- --></a>
+		
+		
+		<button id="preview" class="charcoal button">Preview</button>
+        <button id="stop" class="charcoal button">Stop</button>
+
+	</div>	
+    
+	<div id="slideshow-wrapper" class="charcoal">
 		<canvas id=slideshow width=400 height=400>
-		  	
-		</canvas>
-		
-		
-      </div>
-    </div>
-  </div>
-  
-  <div id="footer">
-    LOL.  
-  </div>
+	        
+	    </canvas>
+	</div>
+	
+    <div id="semd-controls" class="controls">
+        <input class="charcoal" type=email name="email" placeholder="your@email.com" />        
+        <button id="send" class="charcoal button">Send</button>
+    </div>  
+	
   
 </body>
 </html>

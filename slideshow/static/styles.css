@@ -28,6 +28,30 @@ h1 { font-family: 'Kranky', arial, serif; }
 	padding: 0px 15px 0px 0px;
 } 
 
+select, 
+button,
+input {
+    font-family: 'Indie Flower', arial, serif; 
+    font-size: 14px;
+    -webkit-appearance: none;	
+}
+
+/* Button layer for charcoal buttons */
+/* http://gradients.glrzad.com/ */
+.button {
+    background: #ccc;	
+}
+
+.button:hover {
+	background: #eee;  
+}
+
+.button:active {
+    background: black;
+	color: white;  
+}
+
+
 #song-selector {
 	text-align: center;
 }
@@ -35,9 +59,6 @@ h1 { font-family: 'Kranky', arial, serif; }
 /* http://trentwalton.com/2010/07/14/css-webkit-appearance/ */
 select {
 	width: 400px;
-    font-family: 'Indie Flower', arial, serif; 
-	font-size: 14px;
-	-webkit-appearance: none;
 }
 
 #drop-target {
@@ -64,7 +85,8 @@ select {
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-name: blink;
     -webkit-animation-timing-function: ease;   
-	
+
+    /* XXX: Need firefox 5 */	
     -moz-animation-direction: normal;
     -moz-animation-duration: 3.5s;
     -moz-animation-iteration-count: infinite;
@@ -79,12 +101,12 @@ select {
     100% { color: #eee; }
 }
 
-@-moz-keyframes 'blink' {
-    from {
-    	color: #555;
-    }	
+.controls {
+	   margin: 10px auto;
+	   text-align: center;
+}
 
-    to {
-        color: #555;
-    }   
+
+button {
+	width: 200px;	
 }
