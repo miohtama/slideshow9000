@@ -2,8 +2,6 @@ slideshow = {
 
     init : function() {
 
-        // Visual dimensions of output
-        this.width = this.height = 400;
 
 		this.createCanvas();
 		this.createImages();
@@ -27,6 +25,11 @@ slideshow = {
 		
 	createCanvas : function() {
         this.canvas = document.getElementById("slideshow");
+
+        // Visual dimensions of output
+        this.width = $(this.canvas).attr("width");
+        this.height = $(this.canvas).attr("height");
+
         this.ctx = this.canvas.getContext("2d");
         
 	},

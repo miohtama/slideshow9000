@@ -78,13 +78,13 @@
 	</div>	
 	
 	<!-- Hidden video control feeding frames to canvas -->
-	<video id="background-video">
+	<video id="background-video" style="display: none">
         <source src=static/videos/ambient.ogv type=video/ogg>
         <source src=static/videos/ambient.mp4 type=video/mp4>
 	</video>
     
 	<div id="slideshow-wrapper" class="charcoal">
-		<canvas id=slideshow width=400 height=400>
+		<canvas id=slideshow width=710 height=417>
 	        
 	    </canvas>
 	</div>

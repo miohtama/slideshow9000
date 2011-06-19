@@ -110,3 +110,8 @@ select {
 button {
 	width: 200px;	
 }
+
+
+#slideshow {
+	margin: 0 auto;
+}
