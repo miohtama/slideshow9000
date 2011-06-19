@@ -36,7 +36,11 @@
 	
 	
 	<div id="drop-target" class="charcoal">		
-		<div id="drop-note">Drop your image files here d</div>
+		<div id="drop-note">
+		    <span>&lt; &lt; &lt;</span>
+			<span class="text">Drop your image files here</span>
+			<span>&gt; &gt; &gt;</span>
+		</div>
 	</div>
 		
     <div id="bottom">

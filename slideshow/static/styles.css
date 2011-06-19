@@ -43,3 +43,7 @@ select {
 	height: 200px;
 	margin: 10px auto;
 }
+
+#drop-note {
+	margin-top: 80px;
+}

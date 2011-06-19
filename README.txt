@@ -15,12 +15,12 @@ Bootstrapping
 ::
 
     source pyramid/bin/activate
-    cd korppi
+    cd slideshow
     python setup.py develop
     paster server development.ini
     
     
-Enter development server
+Browser to the development server
 
 ::
 
