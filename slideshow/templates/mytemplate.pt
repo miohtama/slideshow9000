@@ -8,12 +8,15 @@
   
   <link rel="stylesheet" href="${request.static_url('slideshow:static/styles.css')}" type="text/css" media="screen" charset="utf-8" />
 
+
   <link href='http://fonts.googleapis.com/css?family=Kranky&v1' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Indie+Flower&v1' rel='stylesheet' type='text/css'>
 
   <script type="text/javascript" src="${request.static_url('slideshow:static/jquery-1.5.min.js')}"></script>
   <script src="${request.static_url('slideshow:static/js/soundmanager2-jsmin.js')}"></script>  
   <script type="text/javascript" src="${request.static_url('slideshow:static/slideshow.js')}"></script>
+  <script type="text/javascript" src="${request.static_url('slideshow:static/effects.js')}"></script>
+
 
 </head>
 <body>
@@ -34,15 +37,15 @@
 		  </select>
 	</div>
 	
-	
 	<div id="drop-target" class="charcoal">		
 		<div id="drop-note">
-		    <span>&lt; &lt; &lt;</span>
+		    <span class="blinky">&gt; &gt; &gt;</span>
 			<span class="text">Drop your image files here</span>
-			<span>&gt; &gt; &gt;</span>
+			<span class="blinky">&lt; &lt; &lt;</span>			
 		</div>
 	</div>
-		
+	
+	
     <div id="bottom">
     	
       <div class="bottom">

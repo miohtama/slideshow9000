@@ -17,7 +17,7 @@ Bootstrapping
     source pyramid/bin/activate
     cd slideshow
     python setup.py develop
-    paster server development.ini
+    paste server development.ini
     
     
 Browser to the development server

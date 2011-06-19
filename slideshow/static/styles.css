@@ -32,10 +32,12 @@ h1 { font-family: 'Kranky', arial, serif; }
 	text-align: center;
 }
 
+/* http://trentwalton.com/2010/07/14/css-webkit-appearance/ */
 select {
 	width: 400px;
     font-family: 'Indie Flower', arial, serif; 
 	font-size: 14px;
+	-webkit-appearance: none;
 }
 
 #drop-target {
@@ -46,4 +48,14 @@ select {
 
 #drop-note {
 	margin-top: 80px;
+	text-align: center;
 }
+
+
+/* http://stackoverflow.com/questions/6390639/css3-animation-blinking-overlay-box */
+
+.blinky {
+	font-size: 150%;
+	color: #888;
+	
+}  d
