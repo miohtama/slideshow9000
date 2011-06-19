@@ -36,7 +36,17 @@ CC Licensed
 
 * http://www.jamendo.com/en/artist/manguer
 
+Videos
+----------
+
+* http://www.motionshare.com/free-videos/viewvideo/81/ambient-colour-backgrounds/enthroned-forever-slide-sd/Page-1.html
+
 Sources
 --------
 
 * https://github.com/jquery/jquery-mobile
+
+Tools
+-------
+
+* ffmpeg2theora http://v2v.cc/~j/ffmpeg2theora/download.html

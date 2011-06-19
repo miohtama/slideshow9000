@@ -9,8 +9,15 @@ slideshow = {
         this.createPlayer();		
         this.createFileManager();        
 		
+		this.createPreviewButton();
+		this.createStopButton();
+        
+		
 		// Animation time since start in ms
 		this.clock = this.lastClock = 0;
+
+        // Play loop control flag
+		this.play = false;
 
         // Visual dimensions of output
 		this.width = this.height = 400;
@@ -21,6 +28,11 @@ slideshow = {
         this.canvas = document.getElementById("slideshow");
         this.ctx = this.canvas.getContext("2d");
         
+	},
+	
+	createVideoHelper : function() {
+		var v =  document.getElementById("background-video");
+		this.videoHelper = CanvasVideoHelper(this.canvas, v);
 	},
 	
 	createImages : function() {
@@ -75,22 +87,50 @@ slideshow = {
 	
 	createPlayer : function() {
 		this.player = player;
-		this.player.init();
-		this.player.start($.proxy(this.onClock, this));
+		this.player.init($.proxy(this.onClock, this));
+		this.player.loadSong();
 	},
 	
     createFileManager : function() {
         this.fileManager = filemanager;
         this.fileManager.init();
     },
+	
+	createPreviewButton : function() {
+
+        var self = this;
+
+		$("#preview-button").click(function() {            					
+			self.loop();			
+			self.player.start();
+		});
+		
+	},
+
+    createStopButton : function() {
+        
+		var self = this;
+		
+		$("#stop-button").click(function() {                             
+            self.stopLoop();            
+            self.player.stop();
+        });
+        
+    },
+
     		
 	prepareTick : function() {
         setTimeout($.proxy(this.tick, this), 50);
 	},
 	
 	loop : function() {
+	   this.play = true;
 	   console.log("Entering animation loop");
 	   this.prepareTick();	
+	},
+	
+	stopLoop : function() {
+		this.play = false;
 	},
 	
 	/**
@@ -104,6 +144,12 @@ slideshow = {
 	},
 	
 	tick : function() {		
+	
+	  // Stopped
+	  if(!this.play) {
+	  	return;
+	  }
+	
 	  var delta = this.clock - this.lastClock;
 	  this.lastClock = this.clock;
 	  //this.clock += 
@@ -210,56 +256,73 @@ slideshow = {
 	
 };
 
+/**
+ * Music player helper
+ */
 player = {
 		
-	init : function() {
+	init : function(clockCallback) {
 		this.soundPos = 0;		
+        this.sound = null;
+        this.clockCallback = clockCallback;
+        this.loadSong();
+	},
+	
+	loadSong : function() {
+        soundManager.url = 'static/swf/';
+        soundManager.flashVersion = 8; // optional: shiny features (default = 8)
+        soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
+        // enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
+        soundManager.useHTML5Audio = true;
+        soundManager.debugMode = false;
+
+        var self = this;
+        
+        soundManager.onready(function(){
+        
+            var thisSound = soundManager.createSound({
+                id: 'slideshow',
+                url: 'static/music/flautin.mp3',
+                autoLoad: true,
+                autoPlay: false,
+                debugMode: false,
+                
+                onload: function(){
+                    var that = this;
+                },
+                
+                whileloading: function(){
+                },
+                
+                whileplaying: function(){
+                    self.clockCallback(this.position);
+                    self.soundPos = this.position;
+                },
+                
+                volume: 100
+            });
+            
+            self.sound = thisSound;
+        });
+
+		
 	},
 	
 	start : function(clockCallback) {
-		
-	    soundManager.url = 'static/swf/';
-	    soundManager.flashVersion = 8; // optional: shiny features (default = 8)
-	    soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
-	    // enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
-	    soundManager.useHTML5Audio = true;
-	    soundManager.debugMode = false;
-	
+			
 	    var self = this; 
-		    
-	    soundManager.onready(function(){
-			var thisSound = soundManager.createSound({
-				id: 'slideshow',
-				url: 'static/music/flautin.mp3',
-				autoLoad: true,
-				autoPlay: false,
-				debugMode: false,
-				
-				onload: function(){
-					var that = this;
-					
-					$('#loading').hide();
-					$('#controls').append($('<a>Start</a>'));
-					$('#controls a').click(function(){
-						that.play();
-					});
-				},
-				
-				whileloading: function(){
-				},
-				
-				whileplaying: function(){
-					clockCallback(this.position);
-					self.soundPos = this.position;
-				},
-				
-				volume: 100
-			});
-		});
+		 
+		this.sound.play();
+		  
 	   // Ready to use; soundManager.createSound() etc. can now be called.		
 					
-	}
+	},
 	
+	stop : function() {
+		if(this.sound) {
+			this.sound.stop();
+		}
+	}
 };
 
 var filemanager = {	
@@ -268,5 +331,6 @@ var filemanager = {
         $('#fileupload').fileupload();
     }
 };
+
 
 $($.proxy(slideshow.init, slideshow));
