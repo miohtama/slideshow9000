@@ -264,6 +264,7 @@ player = {
 
 var filemanager = {	
     init : function() {
+        alert("in fm init");
         // Initialize the jQuery File Upload widget:
         $('#fileupload').fileupload();
     }
