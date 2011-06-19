@@ -103,17 +103,34 @@ slideshow = {
 	 * Enter the main rendering loop
 	 */
     loop : function() {
-        if (this.play) {
-            // Already playing
-            return;
-        }
+       console.log("-----------------------")    	
+	   console.log("loop start")	
+       console.log("-----------------------")       
+	
+	   if(this.play) {
+	   	// Already playing
+		return;
+	   }
+	   
+	   // Reset clock
+	   this.clock = 0;
+	   
+	   // Canvas full reset
+	   // http://diveintohtml5.org/canvas.html#divingin
+	   this.canvas.width = this.canvas.width;
+	   this.ctx = this.canvas.getContext("2d");
 
-        this.renderer = new Renderer();
-        this.renderer.init(this, this.getImages(), this.beats);
-        this.renderer.start();
-        this.play = true;
-        console.log("Entering animation loop");
-        this.prepareTick();  
+	   
+		
+	   this.renderer = new Renderer();
+	   
+	   this.renderer.init(this, this.getImages(), this.beats);
+	   
+	   this.renderer.start();
+		
+       this.play = true;
+       console.log("Entering animation loop");
+       this.prepareTick();  
     },
     
     stopLoop : function() {
@@ -126,8 +143,8 @@ slideshow = {
      * @param {Object} time
      */
     onClock : function(time) {
-        //console.log("Got clock:" + time);
-         this.clock = time;
+        console.log("Got clock:" + time);
+        this.clock = time;
     },
     
     tick : function() {     
@@ -274,12 +291,13 @@ player = {
     init : function(clockCallback) {
         this.soundPos = 0;      
         this.sound = null;
+		// this.startCallback = startCallback;
         this.clockCallback = clockCallback;
         this.loadSong();
     },
     
     loadSong : function() {
-        soundManager.url = '/static/swf';
+        soundManager.url = 'static/swf/';
         soundManager.flashVersion = 8; // optional: shiny features (default = 8)
         soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
         // enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
@@ -299,13 +317,16 @@ player = {
                 onload: function(){
                     var that = this;
                 },
+				
+				onplay : function() {
+					//self.startCallback();
+				},
                 
-                whileloading: function(){
+                whileloading: function() {
                 },
                 
                 whileplaying: function(){
                     self.clockCallback(this.position);
-                    self.soundPos = this.position;
                 },
                 
                 volume: 100
@@ -315,12 +336,9 @@ player = {
         });
     },
     
-    start : function(clockCallback) {
-        var self = this; 
-        this.sound.play();
-          
-       // Ready to use; soundManager.createSound() etc. can now be called.      
-                    
+    start : function() {					
+        this.sound.setPosition(0);         
+        this.sound.play();                    
     },
     
     stop : function() {

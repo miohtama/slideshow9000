@@ -37,7 +37,7 @@ SlideshowObject.prototype = {
 	
     tick : function(clock) {
 		
-		console.log("Tick:" + this.state + " " + clock + " "  + this.stateStartClock + " " + this.stateEndClock);
+		console.log("Tick:" + this.state + " " + this.image + " " + clock + " "  + this.stateStartClock + " " + this.stateEndClock);
 
         if(this.state == "in") {
             this.doIn(clock);
@@ -86,6 +86,9 @@ SlideshowObject.prototype = {
 		
 		console.log("Rendering " + this.state + " " + this.x + " " + this.y +  " " + this.w + " " + this.h)
 		
+		if(this.state == "dead") {
+			return;
+		}
 		
 		var x = width/2 + width/2*this.x;
 		var y = height/2 + height/2*this.y;
@@ -101,9 +104,10 @@ SlideshowObject.prototype = {
         //ctx.rotate(45 * Math.PI / 180);
 		ctx.globalAlpha = this.opacity;
         
-		console.log("w:" + w + " h:" + h);
+		// console.log("w:" + w + " h:" + h);
 		
 		ctx.drawImage(this.image, 0, 0, w, h);
+		
         ctx.restore();
 		
 	}
@@ -196,6 +200,8 @@ Renderer.prototype = {
 		
 		// Something we can align our image transitions
 		this.beats = beats;
+		
+		this.imagesProcessed = 0;
 	},
 	
 	start : function() {
@@ -216,6 +222,8 @@ Renderer.prototype = {
 			return;
 		}
 		
+		this.imagesProcessed += 1;
+		
 		this.currentImage = new SlideInFadeOut();
 		console.log(this.currentImage);
 		
@@ -223,7 +231,14 @@ Renderer.prototype = {
 		this.currentImage.changeState("in", clock, this.inTime); 		
 	},
 	
+	/**
+	 * Animate objects
+	 * 
+	 * @param {Object} clock
+	 */
 	tick : function(clock) {
+		
+		console.log("Ticking " + clock + " " + this.imagesProcessed);
 
         if (this.currentImage != null) {
             this.currentImage.tick(clock);

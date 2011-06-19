@@ -46,8 +46,13 @@ CanvasVideoHelper.prototype = {
 	 * @param {Object} clock
 	 */
 	fetchFrame : function(clock) {
-		this.video.currentTime = clock / 1000;
-		this.canvasContext.drawImage(this.video, 0, 0, this.width, this.height);
+		try {
+            this.video.currentTime = clock / 1000;
+			this.canvasContext.drawImage(this.video, 0, 0, this.width, this.height);
+		} catch(e) {
+			// Chrome bug?
+			console.log(e);
+		}
 	},
 
     // Draw frame from <video> to <canvas>
