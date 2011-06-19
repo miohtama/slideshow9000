@@ -6,8 +6,10 @@
   <meta name="keywords" content="python web application" />
   <meta name="description" content="pyramid web application" />
   
+  <link rel="stylesheet" href="${request.static_url('slideshow:static/ui-lightness/jquery-ui.css')}" />
   <link rel="stylesheet" href="${request.static_url('slideshow:static/styles.css')}" type="text/css" media="screen" charset="utf-8" />
   <link rel="stylesheet" href="${request.static_url('slideshow:static/ui-lightness/jquery-ui.css')}" type="text/css" media="screen" charset="utf-8" />
+
 
   <link href='http://fonts.googleapis.com/css?family=Kranky&v1' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Indie+Flower&v1' rel='stylesheet' type='text/css'>
@@ -15,6 +17,8 @@
   <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
   <script src="${request.static_url('slideshow:static/js/soundmanager2-jsmin.js')}"></script>
   
+  <script type="text/javascript" src="${request.static_url('slideshow:static/js/jquery.easing.1.3.js')}"></script>
+  <script type="text/javascript" src="${request.static_url('slideshow:static/video.js')}"></script>
   <script type="text/javascript" src="${request.static_url('slideshow:static/slideshow.js')}"></script>
 </head>
 <body>
@@ -121,26 +125,32 @@
     <div id="bottom">
     	
       <div class="bottom">
+    <div id="preview-controls" class="controls">
+	    <a name="preview"><!-- --></a>
+		
+		
+		<button id="preview-button" class="charcoal button">Preview</button>
+        <button id="stop-button" class="charcoal button">Stop</button>
 
-        <div id="drop_zone">Drop j00r filez h3r3</div>
-        <output id="list"></output>
+	</div>	
 	
-	   <p>Timer: <span id="pos">:D</span></p>
-	   	
-		<p id="controls"></p>
-		  	
-		<canvas id=slideshow width=400 height=400>
-		  	
-		</canvas>
-		
-		
-      </div>
-    </div>
-  </div>
-  
-  <div id="footer">
-    LOL.  
-  </div>
+	<!-- Hidden video control feeding frames to canvas -->
+	<video id="background-video" style="display: none">
+        <source src=static/videos/ambient.ogv type=video/ogg>
+        <source src=static/videos/ambient.mp4 type=video/mp4>
+	</video>
+    
+	<div id="slideshow-wrapper" class="charcoal">
+		<canvas id=slideshow width=710 height=417>
+	        
+	    </canvas>
+	</div>
+	
+    <div id="send-controls" class="controls">
+        <input class="charcoal" type=email name="email" placeholder="your@email.com" />        
+        <button id="send" class="charcoal button">Send</button>
+    </div>  
+	
   
 </body>
 </html>

@@ -1,6 +1,8 @@
 slideshow = {
 
     init : function() {
+
+
 		this.createCanvas();
 		this.createImages();
 		//this.createFakeBeats();
@@ -8,19 +10,33 @@ slideshow = {
 
         this.createPlayer();		
         this.createFileManager();        
+        this.createVideoHelper();		
+		this.createPreviewButton();
+		this.createStopButton();
+        
 		
 		// Animation time since start in ms
 		this.clock = this.lastClock = 0;
 
-        // Visual dimensions of output
-		this.width = this.height = 400;
+        // Play loop control flag
+		this.play = false;
 	
 	},	
 		
 	createCanvas : function() {
         this.canvas = document.getElementById("slideshow");
+
+        // Visual dimensions of output
+        this.width = $(this.canvas).attr("width");
+        this.height = $(this.canvas).attr("height");
+
         this.ctx = this.canvas.getContext("2d");
         
+	},
+	
+	createVideoHelper : function() {
+		var v =  document.getElementById("background-video");
+		this.videoHelper = new CanvasVideoHelper(this.canvas, v, this.width, this.height);
 	},
 	
 	createImages : function() {
@@ -38,7 +54,8 @@ slideshow = {
 			console.log("Ready!");
 			readyCount++;
 			if(readyCount >= targets.length) {
-				self.loop();
+                // Enable play button
+				
 			}
 		}				
 				
@@ -75,22 +92,50 @@ slideshow = {
 	
 	createPlayer : function() {
 		this.player = player;
-		this.player.init();
-		this.player.start($.proxy(this.onClock, this));
+		this.player.init($.proxy(this.onClock, this));
+		this.player.loadSong();
 	},
 	
     createFileManager : function() {
         this.fileManager = filemanager;
         this.fileManager.init();
     },
+	
+	createPreviewButton : function() {
+
+        var self = this;
+
+		$("#preview-button").click(function() {            					
+			self.loop();			
+			self.player.start();
+		});
+		
+	},
+
+    createStopButton : function() {
+        
+		var self = this;
+		
+		$("#stop-button").click(function() {                             
+            self.stopLoop();            
+            self.player.stop();
+        });
+        
+    },
+
     		
 	prepareTick : function() {
         setTimeout($.proxy(this.tick, this), 50);
 	},
 	
 	loop : function() {
+	   this.play = true;
 	   console.log("Entering animation loop");
 	   this.prepareTick();	
+	},
+	
+	stopLoop : function() {
+		this.play = false;
 	},
 	
 	/**
@@ -104,6 +149,12 @@ slideshow = {
 	},
 	
 	tick : function() {		
+	
+	  // Stopped
+	  if(!this.play) {
+	  	return;
+	  }
+	
 	  var delta = this.clock - this.lastClock;
 	  this.lastClock = this.clock;
 	  //this.clock += 
@@ -143,6 +194,31 @@ slideshow = {
 		return beat;
 	},
 	
+    /**
+     * Find last beat from the array of all beats.
+     * 
+     * @param clock Clock position
+     * 
+     * @param skip Skip rate. 1= every beat, 2 = every second beat
+     */
+    findLastBeat :function(clock, skip) {
+        
+        var beat = 0;
+        
+		var beats = this.beats;
+		var i;
+		for(i=0; i<beats.length;i++) {
+			var t = beats[i];                       
+			if(t > clock) {
+				break;
+			}			
+			beat = t;            			
+		}
+		        
+        return beat;
+    },
+    	
+	
 	/**
 	 * Calculate beat intensivity as linear function.
 	 * 
@@ -159,15 +235,15 @@ slideshow = {
 	 */
 	calculateBeatIntensivity : function(clock, window, skip) {
 		
-		var beat = this.findNextBeat(clock, skip);
-
+		var beat = this.findLastBeat(clock, skip);
+        
 		var distance = clock - beat;       
 
 			
         // -1 ... 1 intensivity within beat window
-		var normalized = (distance-window) / window;					
+		var normalized = (window-distance) / window;					
 
-        //console.log("Clock:" + clock + " beat:" + beat + " window:" + window + " skip:" + skip + " distance:" + distance);
+        console.log("Clock:" + clock + " beat:" + beat + " window:" + window + " skip:" + skip + " distance:" + distance);
 
         return normalized;
 
@@ -178,8 +254,11 @@ slideshow = {
         var ctx = this.ctx;
 
 		var x = time * 5 / 1000;
+		
 
-        ctx.clearRect(0, 0, this.width, this.height); // clear canvas
+        // ctx.clearRect(0, 0, this.width, this.height); // clear canvas
+		
+		this.videoHelper.fetchFrame(time);
 		
         ctx.fillStyle = "rgb(200,0,0)";
         ctx.fillRect (x+10, 10, x+55, 50);
@@ -210,56 +289,73 @@ slideshow = {
 	
 };
 
+/**
+ * Music player helper
+ */
 player = {
 		
-	init : function() {
+	init : function(clockCallback) {
 		this.soundPos = 0;		
+        this.sound = null;
+        this.clockCallback = clockCallback;
+        this.loadSong();
+	},
+	
+	loadSong : function() {
+        soundManager.url = 'static/swf/';
+        soundManager.flashVersion = 8; // optional: shiny features (default = 8)
+        soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
+        // enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
+        soundManager.useHTML5Audio = true;
+        soundManager.debugMode = false;
+
+        var self = this;
+        
+        soundManager.onready(function(){
+        
+            var thisSound = soundManager.createSound({
+                id: 'slideshow',
+                url: 'static/music/flautin.mp3',
+                autoLoad: true,
+                autoPlay: false,
+                debugMode: false,
+                
+                onload: function(){
+                    var that = this;
+                },
+                
+                whileloading: function(){
+                },
+                
+                whileplaying: function(){
+                    self.clockCallback(this.position);
+                    self.soundPos = this.position;
+                },
+                
+                volume: 100
+            });
+            
+            self.sound = thisSound;
+        });
+
+		
 	},
 	
 	start : function(clockCallback) {
-		
-	    soundManager.url = 'static/swf/';
-	    soundManager.flashVersion = 8; // optional: shiny features (default = 8)
-	    soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
-	    // enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
-	    soundManager.useHTML5Audio = true;
-	    soundManager.debugMode = false;
-	
+			
 	    var self = this; 
-		    
-	    soundManager.onready(function(){
-			var thisSound = soundManager.createSound({
-				id: 'slideshow',
-				url: 'static/music/flautin.mp3',
-				autoLoad: true,
-				autoPlay: false,
-				debugMode: false,
-				
-				onload: function(){
-					var that = this;
-					
-					$('#loading').hide();
-					$('#controls').append($('<a>Start</a>'));
-					$('#controls a').click(function(){
-						that.play();
-					});
-				},
-				
-				whileloading: function(){
-				},
-				
-				whileplaying: function(){
-					clockCallback(this.position);
-					self.soundPos = this.position;
-				},
-				
-				volume: 100
-			});
-		});
+		 
+		this.sound.play();
+		  
 	   // Ready to use; soundManager.createSound() etc. can now be called.		
 					
-	}
+	},
 	
+	stop : function() {
+		if(this.sound) {
+			this.sound.stop();
+		}
+	}
 };
 
 var filemanager = {	
@@ -270,5 +366,6 @@ var filemanager = {
         });
     }
 };
+
 
 $($.proxy(slideshow.init, slideshow));
