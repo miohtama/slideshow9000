@@ -37,7 +37,9 @@ slideshow = {
     
     createImages : function() {
         var targets = [
-          "/static/images/kakku.png"
+          "/static/images/kakku.png",
+          "/static/images/coffee.jpg"
+
         ];
             
         var readyCount = 0;
@@ -121,7 +123,22 @@ slideshow = {
         setTimeout($.proxy(this.tick, this), 50);
     },
     
+	/**
+	 * Enter the main rendering loop
+	 */
     loop : function() {
+		
+	   if(this.play) {
+	   	// Already playing
+		return;
+	   }
+		
+	   this.renderer = new Renderer();
+	   
+	   this.renderer.init(this, this.images, this.beats);
+	   
+	   this.renderer.start();
+		
        this.play = true;
        console.log("Entering animation loop");
        this.prepareTick();  
@@ -150,9 +167,14 @@ slideshow = {
     
       var delta = this.clock - this.lastClock;
       this.lastClock = this.clock;
-      //this.clock += 
+    
+	  // 
+	  this.renderer.tick(this.clock);
+	
+	  //this.clock += 
       this.animate(delta, this.clock); 
-      this.prepareTick();
+    
+	  this.prepareTick();
       
       $("#pos").text(this.clock);
       
@@ -271,13 +293,7 @@ slideshow = {
             scale = 1;
         }       
         
-        var w = image.width*scale;
-        var h = image.height*scale;
-
-        //console.log("Drawing:" + x + " w:" + w);        
-
-        ctx.drawImage(image, 0, x, w, h);
-
+        this.renderer.render(ctx, this.width, this.height);
     }
     
 };

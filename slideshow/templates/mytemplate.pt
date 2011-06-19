@@ -20,7 +20,9 @@
   
   <script type="text/javascript" src="${request.static_url('slideshow:static/js/jquery.easing.1.3.js')}"></script>
   <script type="text/javascript" src="${request.static_url('slideshow:static/video.js')}"></script>
+  <script type="text/javascript" src="${request.static_url('slideshow:static/renderer.js')}"></script>
   <script type="text/javascript" src="${request.static_url('slideshow:static/slideshow.js')}"></script>
+
 </head>
 <body>
   <div id="wrap">
