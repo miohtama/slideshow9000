@@ -194,6 +194,31 @@ slideshow = {
 		return beat;
 	},
 	
+    /**
+     * Find last beat from the array of all beats.
+     * 
+     * @param clock Clock position
+     * 
+     * @param skip Skip rate. 1= every beat, 2 = every second beat
+     */
+    findLastBeat :function(clock, skip) {
+        
+        var beat = 0;
+        
+		var beats = this.beats;
+		var i;
+		for(i=0; i<beats.length;i++) {
+			var t = beats[i];                       
+			if(t > clock) {
+				break;
+			}			
+			beat = t;            			
+		}
+		        
+        return beat;
+    },
+    	
+	
 	/**
 	 * Calculate beat intensivity as linear function.
 	 * 
@@ -210,15 +235,15 @@ slideshow = {
 	 */
 	calculateBeatIntensivity : function(clock, window, skip) {
 		
-		var beat = this.findNextBeat(clock, skip);
-
+		var beat = this.findLastBeat(clock, skip);
+        
 		var distance = clock - beat;       
 
 			
         // -1 ... 1 intensivity within beat window
-		var normalized = (distance-window) / window;					
+		var normalized = (window-distance) / window;					
 
-        //console.log("Clock:" + clock + " beat:" + beat + " window:" + window + " skip:" + skip + " distance:" + distance);
+        console.log("Clock:" + clock + " beat:" + beat + " window:" + window + " skip:" + skip + " distance:" + distance);
 
         return normalized;
 
