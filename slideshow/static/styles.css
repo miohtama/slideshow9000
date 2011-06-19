@@ -115,3 +115,7 @@ button {
 #slideshow {
 	margin: 0 auto;
 }
+
+#image-list { list-style-type: none; margin: 0; padding: 0; }
+#image-list li { margin: 3px 3px 3px 0; padding: 3px; float: left; width: 126px; height: 96px; font-size: 4em; text-align: center; border: 0px; }
+#image-list li img { max-width: 120px; max-height: 90px; border: 0px; }
