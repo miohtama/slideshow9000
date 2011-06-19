@@ -1,3 +1,11 @@
+soundManager.url = 'static/swf/';
+soundManager.flashVersion = 8; // optional: shiny features (default = 8)
+soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
+// enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
+soundManager.useHTML5Audio = true;
+soundManager.debugMode = false;
+soundManager.timeout = 5000;
+
 slideshow = {
     init : function() {
         this.createCanvas();
@@ -289,14 +297,8 @@ player = {
     },
     
     loadSong : function() {
-        soundManager.url = 'static/swf/';
-        soundManager.flashVersion = 8; // optional: shiny features (default = 8)
-        soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
-        // enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
-        soundManager.useHTML5Audio = true;
-        soundManager.debugMode = true;
+
         var self = this;
-        soundManager.timeout = 5000;
 
         soundManager.onready(function(){        
             var thisSound = soundManager.createSound({

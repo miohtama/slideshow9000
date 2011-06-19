@@ -44,24 +44,23 @@
 	
 	
 	<div id="drop-target" class="charcoal">		
-<div id="fileupload">
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <div class="fileupload-buttonbar">
-            <label class="fileinput-button">
-                <span>Add files...</span>
-                <input type="file" name="files[]" multiple>
-            </label>
-            <button type="submit" class="start">Start upload</button>
-            <button type="reset" class="cancel">Cancel upload</button>
-            <button type="button" class="delete">Delete files</button>
-        </div>
-    </form>
-    <div class="fileupload-content">
-        <table class="files"></table>
-        <div class="fileupload-progressbar"></div>
-    </div>
-</div>
-        </div>
+		<div id="fileupload">
+		    <form action="/upload" method="POST" enctype="multipart/form-data">
+		        <div class="fileupload-buttonbar">
+		            <label class="fileinput-button">
+		                <span>Add files...</span>
+		                <input type="file" name="files[]" multiple>
+		            </label>
+		            <button type="submit" class="start">Start upload</button>
+		            <button type="reset" class="cancel">Cancel upload</button>
+		            <button type="button" class="delete">Delete files</button>
+		        </div>
+		    </form>
+		    <div class="fileupload-content">
+		        <table class="files"></table>
+		        <div class="fileupload-progressbar"></div>
+		    </div>
+		</div>
     </div>
 
     <ul id="image-list"><li><img src="/static/images/coffee.jpg"/></li><li><img src="/static/images/kakku.png" /></li></ul>
