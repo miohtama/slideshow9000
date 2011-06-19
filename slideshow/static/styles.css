@@ -58,4 +58,33 @@ select {
 	font-size: 150%;
 	color: #888;
 	
-}  d
+    
+	-webkit-animation-direction: normal;
+    -webkit-animation-duration: 3.5s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-name: blink;
+    -webkit-animation-timing-function: ease;   
+	
+    -moz-animation-direction: normal;
+    -moz-animation-duration: 3.5s;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-name: blink;
+    -moz-animation-timing-function: ease;   
+	
+}
+
+@-webkit-keyframes 'blink' {
+    0% { color: #eee; }
+    50% { color: #555; }
+    100% { color: #eee; }
+}
+
+@-moz-keyframes 'blink' {
+    from {
+    	color: #555;
+    }	
+
+    to {
+        color: #555;
+    }   
+}
