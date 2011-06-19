@@ -64,7 +64,7 @@
         </div>
     </div>
 
-    <ul id="image-list"></ul>
+    <ul id="image-list"><li><img src="/static/images/coffee.jpg"/></li><li><img src="/static/images/kakku.png" /></li></ul>
 		
     <div id="bottom">
     	
