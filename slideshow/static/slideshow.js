@@ -1,6 +1,10 @@
 slideshow = {
 
     init : function() {
+
+        // Visual dimensions of output
+        this.width = this.height = 400;
+
 		this.createCanvas();
 		this.createImages();
 		//this.createFakeBeats();
@@ -8,7 +12,7 @@ slideshow = {
 
         this.createPlayer();		
         this.createFileManager();        
-		
+        this.createVideoHelper();		
 		this.createPreviewButton();
 		this.createStopButton();
         
@@ -18,9 +22,6 @@ slideshow = {
 
         // Play loop control flag
 		this.play = false;
-
-        // Visual dimensions of output
-		this.width = this.height = 400;
 	
 	},	
 		
@@ -32,7 +33,7 @@ slideshow = {
 	
 	createVideoHelper : function() {
 		var v =  document.getElementById("background-video");
-		this.videoHelper = CanvasVideoHelper(this.canvas, v);
+		this.videoHelper = new CanvasVideoHelper(this.canvas, v, this.width, this.height);
 	},
 	
 	createImages : function() {
@@ -50,7 +51,8 @@ slideshow = {
 			console.log("Ready!");
 			readyCount++;
 			if(readyCount >= targets.length) {
-				self.loop();
+                // Enable play button
+				
 			}
 		}				
 				
@@ -224,8 +226,11 @@ slideshow = {
         var ctx = this.ctx;
 
 		var x = time * 5 / 1000;
+		
 
-        ctx.clearRect(0, 0, this.width, this.height); // clear canvas
+        // ctx.clearRect(0, 0, this.width, this.height); // clear canvas
+		
+		this.videoHelper.fetchFrame(time);
 		
         ctx.fillStyle = "rgb(200,0,0)";
         ctx.fillRect (x+10, 10, x+55, 50);

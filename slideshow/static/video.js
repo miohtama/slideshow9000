@@ -2,57 +2,83 @@
  * Handle slideshow background video w/canvas co-operation
  */
 
-function CanvasVideoHelper(canvas, video) {
+function CanvasVideoHelper(canvas, video, width, height) {
 	this.canvas = canvas;
 	this.video = video;
+	this.width = width;
+	this.height = height;
+	
+	this.init();
 }
 
-CanvasVideoHelper.prototype.init = function() {
+CanvasVideoHelper.prototype = {
 	
-	var v = this.video;
-    var canvas = this.canvas;
-    var context = canvas.getContext('2d');
+	init : function() {
 	
-    var back = document.createElement('canvas');
-    var backcontext = back.getContext('2d');
+		var v = this.video;
+	    var canvas = this.canvas;
+	    
+		this.canvasContext = canvas.getContext('2d');
 
-    this.backContext = backcontext;
-    var cw,ch;
-
-    v.addEventListener('play', function(){
-        cw = v.clientWidth;
-        ch = v.clientHeight;
-        canvas.width = cw;
-        canvas.height = ch;
-        back.width = cw;
-        back.height = ch;
-        draw(v,context,backcontext,cw,ch);
-    },false);
+        if(!this.canvasContext) {
+			alert("fasdfas");
+		}
+				
+	    var back = document.createElement('canvas');
+	    var backcontext = back.getContext('2d');
 	
-};
-
-CanvasVideoHelper.draw = function (v,c,bc,w,h) {
+	    this.backContext = backcontext;
+	    var cw,ch;	
+		
+	},
 	
-    if(v.paused || v.ended) return false;
-    // First, draw it into the backing canvas
-    bc.drawImage(v,0,0,w,h);
-    // Grab the pixel data from the backing canvas
-    var idata = bc.getImageData(0,0,w,h);
-    var data = idata.data;
-    // Loop through the pixels, turning them grayscale
-    for(var i = 0; i < data.length; i+=4) {
-        var r = data[i];
-        var g = data[i+1];
-        var b = data[i+2];
-        var brightness = (3*r+4*g+b)>>>3;
-        data[i] = brightness;
-        data[i+1] = brightness;
-        data[i+2] = brightness;
-    }
-    idata.data = data;
-    // Draw the pixels onto the visible canvas
-    c.putImageData(idata,0,0);
-    // Start over!
-    setTimeout(function(){ draw(v,c,bc,w,h); }, 0);
+    start : function() {
+		this.video.play();
+	},
+	
+	stop : function() {
+		this.video.stop();
+	},
+		
+	/**
+	 * Pick video frame and put it to the canvas
+	 * 
+	 * @param {Object} clock
+	 */
+	fetchFrame : function(clock) {
+		this.video.currentTime = clock / 1000;
+		this.canvasContext.drawImage(this.video, 0, 0, this.width, this.height);
+	},
+
+    // Draw frame from <video> to <canvas>
+    draw: function(v, c, bc, w, h){
+	
+		if (v.paused || v.ended) 
+			return false;
+		// First, draw it into the backing canvas
+		bc.drawImage(v, 0, 0, w, h);
+		
+		// Grab the pixel data from the backing canvas
+		var idata = bc.getImageData(0, 0, w, h);
+		var data = idata.data;
+		// Loop through the pixels, turning them grayscale
+		for (var i = 0; i < data.length; i += 4) {
+			var r = data[i];
+			var g = data[i + 1];
+			var b = data[i + 2];
+			var brightness = (3 * r + 4 * g + b) >>> 3;
+			data[i] = brightness;
+			data[i + 1] = brightness;
+			data[i + 2] = brightness;
+		}
+		idata.data = data;
+		// Draw the pixels onto the visible canvas
+		c.putImageData(idata, 0, 0);
+		// Start over!
+		setTimeout(function(){
+			draw(v, c, bc, w, h);
+		}, 0);
+		
+	}
 }
 
