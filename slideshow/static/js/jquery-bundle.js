@@ -2298,5 +2298,4 @@ b.dequeue()})})}})(jQuery);
             }
         }
     });
-
 }(jQuery));

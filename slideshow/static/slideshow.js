@@ -365,13 +365,32 @@ var filemanager = {
     },
 
     done : function(e, data) {
-        var filename = data.result.name;
-        var img = $('<li><img /></li>');
-        img.find('img').attr('src', filename);
-        $('#image-list').append(img);
-        $('#image-list').sortable('refresh');
+        data.result.forEach(function(item) {
+            console.log(item.name);
+            var filename = item.name;
+            var img = $('<li><img /></li>');
+            img.find('img').attr('src', filename);
+            $('#image-list').append(img);
+            $('#image-list').sortable('refresh');
+        });
     }
 };
 
+var loadTemplate = function(url, id) {
+    var deferred = $.Deferred();
+    $.get(url, function(template) {
+        var el = $('<script type="text/x-jquery-tmpl"></script>').attr('id', id).text(template).appendTo('head');
+        deferred.resolve(el);
+    });
+    return deferred;
+};
 
-$($.proxy(slideshow.init, slideshow));
+$(function() {
+    var templates = [
+        loadTemplate('/static/templates/template-upload.tmpl', 'template-upload'),
+        loadTemplate('/static/templates/template-download.tmpl', 'template-download')
+    ];
+    $.when.apply($, templates).then(function () {
+        $.proxy(slideshow.init, slideshow)();
+    });
+});
