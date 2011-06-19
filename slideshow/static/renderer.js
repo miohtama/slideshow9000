@@ -196,6 +196,8 @@ Renderer.prototype = {
 		
 		// Something we can align our image transitions
 		this.beats = beats;
+		
+		this.imagesProcessed = 0;
 	},
 	
 	start : function() {
@@ -216,6 +218,8 @@ Renderer.prototype = {
 			return;
 		}
 		
+		this.imagesProcessed = 0;
+		
 		this.currentImage = new SlideInFadeOut();
 		console.log(this.currentImage);
 		
@@ -223,7 +227,14 @@ Renderer.prototype = {
 		this.currentImage.changeState("in", clock, this.inTime); 		
 	},
 	
+	/**
+	 * Animate objects
+	 * 
+	 * @param {Object} clock
+	 */
 	tick : function(clock) {
+		
+		console.log("Ticking " + clock + " " + this.imagesProcessed);
 
         if (this.currentImage != null) {
             this.currentImage.tick(clock);
