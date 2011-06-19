@@ -262,38 +262,11 @@ player = {
 	
 };
 
-
-filemanager = {
-	
-	init : function() {
-	  var dropZone = document.getElementById('drop_zone');
-	  //dropZone.addEventListener('dragover', this.handleDragOver, false);
-	  //dropZone.addEventListener('drop', handleFileSelect, false);
-	},
-
-	  handleFileSelect : function (evt) {
-	    evt.stopPropagation();
-	    evt.preventDefault();
-	
-	    var files = evt.dataTransfer.files; // FileList object.
-	
-	    // files is a FileList of File objects. List some properties.
-	    var output = [];
-	    for (var i = 0, f; f = files[i]; i++) {
-	      output.push('<li><strong>', f.name, '</strong> (', f.type || 'n/a', ') - ',
-	                  f.size, ' bytes, last modified: ',
-	                  f.lastModifiedDate.toLocaleDateString(), '</li>');
-	    }
-	    document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-	  },
-	
-	  handleDragOver : function(evt) {
-	    evt.stopPropagation();
-	    evt.preventDefault();
-	  }
-
+var filemanager = {	
+    init : function() {
+        // Initialize the jQuery File Upload widget:
+        $('#fileupload').fileupload();
+    }
 };
 
-$(document).ready($.proxy(slideshow.init, slideshow));
-
-
+$($.proxy(slideshow.init, slideshow));
