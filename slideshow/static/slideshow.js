@@ -84,7 +84,7 @@ slideshow = {
             clock += step;
         }
         
-        console.log("Got beats:" + this.beats);
+        // console.log("Got beats:" + this.beats);
     },
     
     createPlayer : function() {
@@ -168,7 +168,6 @@ slideshow = {
      * @param {Object} time
      */
     onClock : function(time) {
-        console.log("Got clock:" + time);
         this.clock = time;
     },
     
@@ -288,15 +287,7 @@ slideshow = {
         // ctx.clearRect(0, 0, this.width, this.height); // clear canvas
         
         this.videoHelper.fetchFrame(time);
-        
-        ctx.fillStyle = "rgb(200,0,0)";
-        ctx.fillRect (x+10, 10, x+55, 50);
-        
-        ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
-        ctx.fillRect (30, 30, 55, 50);      
-                
-        var image = this.images[0];
-                        
+                                
         var beat = this.calculateBeatIntensivity(time, 200, 5);
         
         var scale;
@@ -370,8 +361,7 @@ player = {
         
     },
     
-    start : function() {					
-		this.sound.setPosition(0);         
+    start : function() {					     
         this.sound.play();                    
     },
     

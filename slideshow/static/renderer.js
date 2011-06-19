@@ -98,7 +98,7 @@ SlideshowObject.prototype = {
 		ctx.save();
         
 		// Put bottom center at origin
-        ctx.translate(x - this.image.width/2, y - this.image.height/2);
+        ctx.translate(x, y);
         // Rotate
         // Beware the next translations/positions are done along the rotated axis
         //ctx.rotate(45 * Math.PI / 180);
