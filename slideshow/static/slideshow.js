@@ -1,7 +1,6 @@
 slideshow = {
     init : function() {
         this.createCanvas();
-        this.createImages();
         //this.createFakeBeats();
         this.beats = [193, 1693, 3195, 4691, 6188, 7692, 9195, 10692, 12191, 13694, 15197, 16693, 18193, 19696, 21200, 22699, 24199, 25701, 27198, 28696, 30199, 31698, 33198, 34696, 36200, 37708, 39199, 40698, 42197, 43701, 45198, 46700, 48196, 49699, 51199, 52696, 54196, 55699, 57195, 58696, 60199, 61701, 63199, 64696, 66198, 67703, 69203, 70732, 72205, 73693, 75198, 76701, 78192, 79695, 81199, 82695, 84192, 85689, 87191, 88694, 90191, 91695, 93196, 94694, 96193, 97697, 99196, 100698, 102199, 103695, 105198, 106702, 108203, 109702, 111198, 112699, 114200, 115697, 117191, 118692, 120196, 121699, 123200, 124699, 126197, 127694, 129194, 130695, 132197, 133693, 135263, 136989, 138580, 140078, 141576, 143077, 144575, 146076, 147573, 149070, 150570, 152075, 153578, 155076, 156577, 158077, 159573, 161073, 162572, 164067, 165571, 167068, 168566, 170069, 171574, 173084, 174588, 176078, 177576, 179072, 180571, 182069, 183569, 185070, 186574, 188073, 189581, 191077, 192568, 194065, 195571, 197068, 198565, 200065, 201568, 203072, 204567, 206070, 207570, 209067, 210566, 212069, 213566, 215065, 216561, 218071, 219574, 221073, 222571, 224079, 225572, 227068, 228566, 230063, 231569, 233069, 234567, 236068, 237570, 239069, 240568, 242070, 243568, 245071, 246572, 248070, 249571, 251076, 252574, 254074, 255576, 257069, 258571, 260070, 261572, 263070, 264568, 266068, 267572, 269073, 270572, 272069, 273565, 275065, 276565, 278066, 279575, 281073, 282577, 284072, 285576, 287071, 288572, 290070, 291568, 293069, 294571, 296076, 297571, 299070, 300566, 302068, 303571, 305068, 306570, 308078, 309581, 311074, 312573, 314068, 315566, 317064, 318563, 320065, 321564, 323064, 324567, 326061, 327564, 329062, 330574, 332076, 333573, 335073, 336572, 338073, 339563, 341070, 342571, 344067, 345564, 347068, 348566, 350065, 351576, 353072, 354566, 356064, 357565, 359070, 360566, 362065, 363562, 365066, 366568, 368067, 369565, 371067, 372564, 374067, 375564, 377055, 378549, 380060, 381560, 383061, 384564, 386066, 387568, 389069, 390569, 392059, 393562, 395065, 396565, 398067, 399571, 401068, 402567, 404069, 405572, 407068, 408568, 410069, 411569, 413065, 414561, 416065, 417568, 419067, 420570, 422067, 423564, 425069, 426567, 428064, 429566, 431068, 432603, 434075, 435539];
 
@@ -35,37 +34,14 @@ slideshow = {
         this.videoHelper = new CanvasVideoHelper(this.canvas, v, this.width, this.height);
     },
     
-    createImages : function() {
-        var targets = [
-          "/static/images/kakku.png",
-          "/static/images/coffee.jpg"
-
-        ];
-            
-        var readyCount = 0;
-        var images = this.images = [];   
-
-        var self = this;
-
-        function ready() {
-            console.log("Ready!");
-            readyCount++;
-            if(readyCount >= targets.length) {
-                // Enable play button
-                
-            }
-        }               
-                
-        targets.forEach(function(src) {
-            console.log("Loading img:" + src);
-            var img = new Image();          
-            img.onload = ready;     
-            img.src = src;  
-            images.push(img);
-        });    
-    
+    getImages : function () {
+        var imgs = $('#image-list img');
+        var results = [];
+        $.map(imgs, function(e) {
+            results.push(e);
+        });
+        return results;
     },
-    
     
     /**
      * Make a beat array where we have 90 BPM for one minute
@@ -127,7 +103,6 @@ slideshow = {
 	 * Enter the main rendering loop
 	 */
     loop : function() {
-
        console.log("-----------------------")    	
 	   console.log("loop start")	
        console.log("-----------------------")       
@@ -149,7 +124,7 @@ slideshow = {
 		
 	   this.renderer = new Renderer();
 	   
-	   this.renderer.init(this, this.images, this.beats);
+	   this.renderer.init(this, this.getImages(), this.beats);
 	   
 	   this.renderer.start();
 		
@@ -287,16 +262,14 @@ slideshow = {
         // ctx.clearRect(0, 0, this.width, this.height); // clear canvas
         
         this.videoHelper.fetchFrame(time);
-                                
-        var beat = this.calculateBeatIntensivity(time, 200, 5);
         
-        var scale;
+        ctx.fillStyle = "rgb(200,0,0)";
+        ctx.fillRect (x+10, 10, x+55, 50);
+        
+        ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+        ctx.fillRect (30, 30, 55, 50);
 
-        if(beat > 0) {
-            scale = 1 + beat;           
-        } else {
-            scale = 1;
-        }       
+        var beat = this.calculateBeatIntensivity(time, 200, 5);         
         
         this.renderer.render(ctx, this.width, this.height);
     }
@@ -307,7 +280,6 @@ slideshow = {
  * Music player helper
  */
 player = {
-        
     init : function(clockCallback) {
         this.soundPos = 0;      
         this.sound = null;
@@ -317,22 +289,19 @@ player = {
     },
     
     loadSong : function() {
-		
-		// 
         soundManager.url = 'static/swf/';
         soundManager.flashVersion = 8; // optional: shiny features (default = 8)
         soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
         // enable HTML5 audio support, if you're feeling adventurous. iPad/iPhone will always get this.
         soundManager.useHTML5Audio = true;
-        soundManager.debugMode = false;
-
+        soundManager.debugMode = true;
         var self = this;
-        
-        soundManager.onready(function(){
-        
+        soundManager.timeout = 5000;
+
+        soundManager.onready(function(){        
             var thisSound = soundManager.createSound({
-                id: 'slideshow-music',
-                url: 'static/music/flautin.mp3',
+                id: 'slideshow',
+                url: '/static/music/flautin.mp3',
                 autoLoad: true,
                 autoPlay: false,
                 debugMode: false,
@@ -357,11 +326,9 @@ player = {
             
             self.sound = thisSound;
         });
-
-        
     },
     
-    start : function() {					     
+    start : function() {					
         this.sound.play();                    
     },
     
@@ -386,13 +353,32 @@ var filemanager = {
     },
 
     done : function(e, data) {
-        var filename = data.result.name;
-        var img = $('<li><img /></li>');
-        img.find('img').attr('src', filename);
-        $('#image-list').append(img);
-        $('#image-list').sortable('refresh');
+        data.result.forEach(function(item) {
+            console.log(item.name);
+            var filename = item.name;
+            var img = $('<li><img /></li>');
+            img.find('img').attr('src', filename);
+            $('#image-list').append(img);
+            $('#image-list').sortable('refresh');
+        });
     }
 };
 
+var loadTemplate = function(url, id) {
+    var deferred = $.Deferred();
+    $.get(url, function(template) {
+        var el = $('<script type="text/x-jquery-tmpl"></script>').attr('id', id).text(template).appendTo('head');
+        deferred.resolve(el);
+    });
+    return deferred;
+};
 
-$($.proxy(slideshow.init, slideshow));
+$(function() {
+    var templates = [
+        loadTemplate('/static/templates/template-upload.tmpl', 'template-upload'),
+        loadTemplate('/static/templates/template-download.tmpl', 'template-download')
+    ];
+    $.when.apply($, templates).then(function () {
+        $.proxy(slideshow.init, slideshow)();
+    });
+});
