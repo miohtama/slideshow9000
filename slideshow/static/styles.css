@@ -1,0 +1,45 @@
+body {
+	font-family: 'Indie Flower', arial, serif; 
+	font-size: 15px;
+}
+
+#wrap {
+	width: 800px;
+	margin: 0 auto;
+}
+
+
+#top {
+	text-align: center;
+}
+
+h1 { font-family: 'Kranky', arial, serif; }
+
+/* Courtesy of http://stackoverflow.com/questions/6401993/charcoal-mock-up-like-border-effect-with-css3/6402175#6402175 */
+.charcoal{
+	border: double black 1em;
+	-o-border-image:url(boxbg.png) 25 25 stretch stretch;
+	-icab-border-image:url(boxbg.png) 25 25 stretch stretch;
+	-moz-border-image:url(boxbg.png) 25 25 stretch stretch;
+	-webkit-border-image:url(boxbg.png) 25 25 stretch stretch;
+	border-image:url(boxbg.png) 25 25 stretch stretch;
+	-khtml-border-image: url(boxbg.png) 25 25 stretch stretch;
+	margin: 0 30px;
+	padding: 0px 15px 0px 0px;
+} 
+
+#song-selector {
+	text-align: center;
+}
+
+select {
+	width: 400px;
+    font-family: 'Indie Flower', arial, serif; 
+	font-size: 14px;
+}
+
+#drop-target {
+	width: 400px;
+	height: 200px;
+	margin: 10px auto;
+}

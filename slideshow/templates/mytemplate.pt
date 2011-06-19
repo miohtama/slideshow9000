@@ -1,16 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal">
 <head>
-  <title>Visualiz3r slideshow</title>
+  <title>S1id3sh0w alpha</title>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
   <meta name="keywords" content="python web application" />
   <meta name="description" content="pyramid web application" />
-  <link rel="shortcut icon" href="${request.static_url('slideshow:static/favicon.ico')}" />
-  <link rel="stylesheet" href="${request.static_url('slideshow:static/pylons.css')}" type="text/css" media="screen" charset="utf-8" />
-  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton|Nobile:regular,i,b,bi&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
-  <!--[if lte IE 6]>
-  <link rel="stylesheet" href="${request.static_url('slideshow:static/ie6.css')}" type="text/css" media="screen" charset="utf-8" />
-  <![endif]-->
+  
+  <link rel="stylesheet" href="${request.static_url('slideshow:static/styles.css')}" type="text/css" media="screen" charset="utf-8" />
+
+  <link href='http://fonts.googleapis.com/css?family=Kranky&v1' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Indie+Flower&v1' rel='stylesheet' type='text/css'>
 
   <script type="text/javascript" src="${request.static_url('slideshow:static/jquery-1.5.min.js')}"></script>
   <script src="${request.static_url('slideshow:static/js/soundmanager2-jsmin.js')}"></script>  
@@ -21,19 +20,25 @@
   <div id="wrap">
   	
     <div id="top">
-      <div class="top align-center">
-        <div><img src="${request.static_url('slideshow:static/pyramid.png')}" width="750" height="169" alt="pyramid"/></div>
-      </div>
+        <h1>Slideshow Maker Demo</h1>
+
+        <p id="slogan">Create a rhytmical slideshow easily</p>
     </div>
 	
-    <div id="middle">
-      <div class="middle align-center">
-        <p class="app-welcome">
-          Welcome to lolzity, where grazz is gr33n and girlz are ROFL.
-        </p>
-      </div>
-    </div>
 	
+	<div id="song-selector">
+		  <select class="charcoal">
+		  	<option value="" selected="selected">Select background music</option>
+            <option value="static/music/flautin.mp3">Flautin</option>
+            <option value="static/music/ume.mp3">Ume</option>
+		  </select>
+	</div>
+	
+	
+	<div id="drop-target" class="charcoal">		
+		<div id="drop-note">Drop your image files here d</div>
+	</div>
+		
     <div id="bottom">
     	
       <div class="bottom">
