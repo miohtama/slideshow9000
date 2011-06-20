@@ -8,6 +8,12 @@
 function SlideshowObject() {	
 }
 
+
+// Randomizer helper to place elements
+function splitrnd(max) {
+	return Math.random(max) - max/2;
+}
+
 SlideshowObject.prototype = {
 	
 	 
@@ -17,12 +23,14 @@ SlideshowObject.prototype = {
 		this.renderer = renderer;
 
 		this.image = image;
-	
-	     	
+		     	
 		this.framedImage = this.createFramedImage(this.image);
 
         // Initialize animation variables
         this.x = this.y = this.w = this.h = 0;
+		
+		// How many degrees this image has been rotated
+		this.rotation = 0;
 		
 		this.opacity = 1;
 	},
@@ -32,7 +40,16 @@ SlideshowObject.prototype = {
         this.duration = duration;
         this.stateStartClock = clock;
         this.stateEndClock = clock + duration;      
-    },
+    
+	    if(name == "in") {
+			this.prepareIn(clock);
+		} else if(name == "out") {
+			this.prepareOut(clock);
+		} else if(name == "onscreen") {
+			this.prepareOnScreen(clock);
+		}
+	
+	},
 	
 	/**
 	 * Convert raw photo to a framed image with drop shadow
@@ -47,14 +64,14 @@ SlideshowObject.prototype = {
 	   
 	   // Picture frame color
 	   var frameColor = "#FFFFFF";
-	   	   
-	   // horizontal and vertical frame border sizes
-	   var borderX = img.width * 0.05;
-	   var borderY = img.height * 0.05;
-	   
+	   	   	   
 	   // Actual pixel data dimensions, not ones presented in DOM tree
 	   var nw = img.naturalWidth;
 	   var nh = img.naturalHeight;
+
+       // horizontal and vertical frame border sizes
+       var borderX = nw * 0.05;
+       var borderY = nh * 0.05;
 	   
 	   // calculate the area we need for the final image
 	   var w = borderX * 2 + shadowSize * 2 + nw;
@@ -100,7 +117,7 @@ SlideshowObject.prototype = {
 	
     tick : function(clock) {
 		
-		console.log("Tick:" + this.state + " " + this.image + " " + clock + " "  + this.stateStartClock + " " + this.stateEndClock);
+		// console.log("Tick:" + this.state + " " + this.image + " " + clock + " "  + this.stateStartClock + " " + this.stateEndClock);
 
         if(this.state == "in") {
             this.doIn(clock);
@@ -112,7 +129,18 @@ SlideshowObject.prototype = {
 		
         if(clock > this.stateEndClock) {
 			if(this.state == "in") {
-				this.changeState("onscreen", clock, this.renderer.onScreenTime);
+
+                // Always go out on a beat
+                // Find the beat when we are going out, 
+				var estimate = clock + this.renderer.onScreenTime;
+				var beat = this.renderer.findNextBeat(estimate, 1000);
+				
+				console.log("Got out time " + clock + " " + estimate + " " + beat);
+				
+				var timeOnScreen = beat - clock;
+				
+				this.changeState("onscreen", clock, timeOnScreen);
+
 			} else if(this.state == "onscreen") {
 				this.changeState("out", clock, this.renderer.outTime);
 			} else {
@@ -126,19 +154,50 @@ SlideshowObject.prototype = {
 		return (this.state == "out" || this.state == "dead");
 	},
 
-    calculateEasing : function(clock, start, end) {		
+    /**
+     * Calculate easing function relative to the start and end time of the current object state
+     * 
+     * @param {Object} clock
+     * @param {Object} start
+     * @param {Object} end
+     * @param {Object} method
+     */
+    calculateEasing : function(clock, start, end, method) {		
 
 	   var relativeClock = clock - this.stateStartClock;		
-       console.log("Easing: " + relativeClock + " " + this.duration);
-       return jQuery.easing.easeOutSine(null, relativeClock, start, end, this.duration)		
+	   
+	   var delta = end - start;
+	   
+	   if(!method) {
+	   	 method = "swing";
+	   }
+	   
+	   func = jQuery.easing[method];
+	   
+       return func(null, relativeClock, start, delta, this.duration);	
     },
+	
+	// Initialize variables for slide in anmation
+	prepareIn : function() {
+		
+	},
 	
 	doIn : function() {
 		throw "Should not happen";
 	},
 	
+	prepareOut : function() {
+		
+	},
+	
+	// Initialize variables for out animation
 	doOut : function() {
 		throw "Should not happen";
+	},
+	
+	// Initialize variables to on screen animation
+	prepareOnScreen : function() {
+		
 	},
 	
 	doOnScreen : function() {
@@ -147,7 +206,7 @@ SlideshowObject.prototype = {
 	
 	render : function(ctx, width, height) {
 		
-		console.log("Rendering " + this.state + " " + this.x + " " + this.y +  " " + this.w + " " + this.h)
+		console.log("Rendering " + this.state + " " + this.x + " " + this.y +  " " + this.w + " " + this.h + " " + this.rotation);
 		
 		if(this.state == "dead") {
 			return;
@@ -177,7 +236,9 @@ SlideshowObject.prototype = {
         ctx.translate(x, y);
         // Rotate
         // Beware the next translations/positions are done along the rotated axis
-        //ctx.rotate(45 * Math.PI / 180);
+        
+		ctx.rotate(this.rotation);
+		
 		ctx.globalAlpha = this.opacity;
         
 		// console.log("w:" + w + " h:" + h);
@@ -210,13 +271,23 @@ $.extend(SlideInFadeOut.prototype, SlideshowObject.prototype, {
 				
 	},
 	
+	
+	prepareIn : function(clock) {
+		// how many degrees we turn during 
+		
+		this.rotationTarget = splitrnd(Math.PI*0.03);			
+		this.rotationStart = splitrnd(Math.PI*0.3); 
+		
+		// Where we start moving in
+		this.sx = splitrnd(0.3);
+        this.sy = splitrnd(0.3);
+
+		
+	},
+	
 	doIn : function(clock) {
 				
 		var size = this.calculateEasing(clock, 0, 1);		
-
-
-        console.log("SlideInFadeOut.doIn:" + clock + " " + size);
-
         if(isNaN(size)) {
 			size = 0;
 		}
@@ -224,21 +295,47 @@ $.extend(SlideInFadeOut.prototype, SlideshowObject.prototype, {
 		this.w = size;
 		this.h = size;
         		
-		this.x = 0;
-		this.y = 0;        
+		this.x = this.calculateEasing(clock, this.sx, 0);
+		this.y = this.calculateEasing(clock, this.sy, 0);
+		
+		//this.x = 0
+		//this.y = 0;
+		
+		// Give it a twist
+        this.rotation =  this.calculateEasing(clock, this.rotationStart, this.rotationTarget);
 		
 	},
 	
+	prepareOnScreen : function(clock) {
+		this.sx = this.x;
+		this.sy = this.y;
+		this.tx = this.x + 0.1;
+		this.ty = this.y + 0.1;
+	},
+	
+	// Some linear movement when we are on the screen itself
 	doOnScreen : function(clock) {	   
-	   
-	   if(!this.onScreenPivotX) {
-	   	   this.onScreenPivotX = this.x;
-	   }
-	   
-	   this.x = this.onScreenPivotX + 0.5 * this.calculateEasing(clock, 0, 1);
+        this.x = this.calculateEasing(clock, this.sx, this.tx);
+		this.y = this.calculateEasing(clock, this.sy, this.ty);
+	},
+	
+	prepareOut : function(clock) {
+		// Fade us out
+		this.ts = 3;
 	},
 	
 	doOut  : function(clock) {
+		
+	   // Blow us up
+	   var s = this.calculateEasing(clock, 1, this.ts, "easeOutExpo");
+	   
+	   if(isNaN(s)) {
+	   	  s = 1;
+	   }
+	   
+	   this.w = s;
+	   this.h = s;
+		
 	   this.opacity = 1 - this.calculateEasing(clock, 0, 1);    
 	   
 	   if(isNaN(this.opacity)) {
@@ -314,7 +411,7 @@ Renderer.prototype = {
 	 */
 	tick : function(clock) {
 		
-		console.log("Ticking " + clock + " " + this.imagesProcessed);
+		//console.log("Ticking " + clock + " " + this.imagesProcessed);
 
         if (this.currentImage != null) {
             this.currentImage.tick(clock);
@@ -343,6 +440,10 @@ Renderer.prototype = {
 		if (this.currentImage != null) {
 		  this.currentImage.render(ctx, width, height);
 	    }
+	},
+	
+	findNextBeat : function(clock, window) {
+		return this.slideshow.findNextBeat(clock, window);
 	}
 	
 	

@@ -127,8 +127,6 @@ slideshow = {
 	   // http://diveintohtml5.org/canvas.html#divingin
 	   this.canvas.width = this.canvas.width;
 	   this.ctx = this.canvas.getContext("2d");
-
-	   
 		
 	   this.renderer = new Renderer();
 	   
@@ -254,7 +252,7 @@ slideshow = {
         // -1 ... 1 intensivity within beat window
         var normalized = (window-distance) / window;                    
 
-        console.log("Clock:" + clock + " beat:" + beat + " window:" + window + " skip:" + skip + " distance:" + distance);
+        // console.log("Clock:" + clock + " beat:" + beat + " window:" + window + " skip:" + skip + " distance:" + distance);
 
         return normalized;
 
