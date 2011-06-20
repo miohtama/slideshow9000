@@ -5,14 +5,79 @@
  * 
  */
 
-function SlideshowObject() {	
-}
 
+/**
+ * Convert raw photo to a framed image with drop shadow
+ * 
+ * @param img Image object (loaded)
+ */
+function createFramedImage(img) {
+        
+   // Drop shadow blur size in pixels
+   // Shadow is same length to both X and Y dirs
+   var shadowSize = 5;
+   
+   // Picture frame color
+   var frameColor = "#FFFFFF";
+           
+   // Actual pixel data dimensions, not ones presented in DOM tree
+   var nw = img.naturalWidth;
+   var nh = img.naturalHeight;
+
+   // horizontal and vertical frame border sizes
+   var borderX = nw * 0.05;
+   var borderY = nh * 0.05;
+   
+   // calculate the area we need for the final image
+   var w = borderX * 2 + shadowSize * 2 + nw;
+   var h = borderY * 2 + shadowSize * 2 + nh;
+   
+   console.log("Got dimensions:" + nw + " " + w + " " + nh + " " + h);
+
+   // Create temporary <canvas> to work with, with expanded canvas (sic.) size     
+   var buffer = document.createElement('canvas');
+   
+   buffer.width = w;
+   buffer.height = h;
+   
+   // Remember, remember, YTI Turbo Pascal
+   var context = buffer.getContext('2d');
+   
+   context.shadowOffsetX = 0;
+   context.shadowOffsetY = 0;
+   context.shadowBlur = shadowSize;
+   context.shadowColor = "black";
+
+   context.fillStyle = "#FFFFFF";
+   context.fillRect(shadowSize, shadowSize, nw+borderX*2, nh+borderY*2);       
+                
+   //Turn off the shadow
+   context.shadowOffsetX = 0;
+   context.shadowOffsetY = 0;
+   context.shadowBlur = 0;
+   context.shadowColor = "transparent";
+   
+   // Slap the imge in the frame
+   context.drawImage(img, shadowSize+borderX, shadowSize+borderY);
+   
+   // We don't need to convert canvas back to imge as drawImage() accepts canvas as parameter
+   // http://kaioa.com/node/103
+   return buffer;
+            
+}
 
 // Randomizer helper to place elements
 function splitrnd(max) {
-	return Math.random(max) - max/2;
+    return Math.random(max) - max/2;
 }
+
+
+/**
+ * Base object for different slideshow slide-ins and outs
+ */
+function SlideshowObject() {	
+}
+
 
 SlideshowObject.prototype = {
 	
@@ -24,7 +89,8 @@ SlideshowObject.prototype = {
 
 		this.image = image;
 		     	
-		this.framedImage = this.createFramedImage(this.image);
+		// This should have been prepared beforehand
+		this.framedImage = this.image.framedImage;
 
         // Initialize animation variables
         this.x = this.y = this.w = this.h = 0;
@@ -50,67 +116,7 @@ SlideshowObject.prototype = {
 		}
 	
 	},
-	
-	/**
-	 * Convert raw photo to a framed image with drop shadow
-	 * 
-	 * @param img Image object (loaded)
-	 */
-	createFramedImage : function(img) {
 			
-	   // Drop shadow blur size in pixels
-	   // Shadow is same length to both X and Y dirs
-	   var shadowSize = 5;
-	   
-	   // Picture frame color
-	   var frameColor = "#FFFFFF";
-	   	   	   
-	   // Actual pixel data dimensions, not ones presented in DOM tree
-	   var nw = img.naturalWidth;
-	   var nh = img.naturalHeight;
-
-       // horizontal and vertical frame border sizes
-       var borderX = nw * 0.05;
-       var borderY = nh * 0.05;
-	   
-	   // calculate the area we need for the final image
-	   var w = borderX * 2 + shadowSize * 2 + nw;
-	   var h = borderY * 2 + shadowSize * 2 + nh;
-	   
-	   console.log("Got dimensions:" + nw + " " + w + " " + nh + " " + h);
-
-       // Create temporary <canvas> to work with, with expanded canvas (sic.) size	   
-	   var buffer = document.createElement('canvas');
-	   
-	   buffer.width = w;
-	   buffer.height = h;
-	   
-	   // Remember, remember, YTI Turbo Pascal
-       var context = buffer.getContext('2d');
-	   
-	   context.shadowOffsetX = 0;
-       context.shadowOffsetY = 0;
-       context.shadowBlur = shadowSize;
-       context.shadowColor = "black";
-
-       context.fillStyle = "#FFFFFF";
-       context.fillRect(shadowSize, shadowSize, nw+borderX*2, nh+borderY*2);	   
-                    
-       //Turn off the shadow
-       context.shadowOffsetX = 0;
-       context.shadowOffsetY = 0;
-       context.shadowBlur = 0;
-       context.shadowColor = "transparent";
-       
-	   // Slap the imge in the frame
-	   context.drawImage(img, shadowSize+borderX, shadowSize+borderY);
-	   
-	   // We don't need to convert canvas back to imge as drawImage() accepts canvas as parameter
-	   // http://kaioa.com/node/103
-	   return buffer;
-	  	   	   	
-	},
-		
 	start : function() {
 		
 	},
@@ -213,11 +219,13 @@ SlideshowObject.prototype = {
 		}
 		
 		// Image sizes are always relative to the canvas size
-		var img = this.framedImage;
+		
+		// This is actually canvas object contained a frame buffer
+		var img = this.image.framed;
 		
         // Calculate aspect ration from the source material		
-		var sw = this.framedImage.width;
-		var sh = this.framedImage.height;		
+		var sw = img.width;
+		var sh = img.height;		
 		var aspect = sw/sh;
 		
 		// Create image dimensions relative to canvas size
@@ -243,7 +251,7 @@ SlideshowObject.prototype = {
         
 		// console.log("w:" + w + " h:" + h);
 		
-		ctx.drawImage(this.framedImage, -nw/2, -nh/2, w, h);
+		ctx.drawImage(img, -nw/2, -nh/2, w, h);
 		
         ctx.restore();
 		
@@ -383,6 +391,33 @@ Renderer.prototype = {
 		this.currentImage = null;
 		
         this.prepareNextImage(0);		
+		
+	},
+	
+	/**
+	 * Create canvas data
+	 */
+	prepare : function(doneCallback) {
+		
+		var processing = this.images.slice(0);
+		
+		function createNextFramedImage() {
+			var image = processing.pop();
+			
+			if(image == null) {
+				doneCallback();
+				return;
+			}
+			
+			if(image.framed) {
+				// Already prepared once
+			} else {			
+    			image.framed = createFramedImage(image);
+	        }
+			setTimeout(createNextFramedImage, 1);
+		}
+				
+		setTimeout(createNextFramedImage, 1);
 		
 	},
 	
