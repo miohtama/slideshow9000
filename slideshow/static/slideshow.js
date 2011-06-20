@@ -379,10 +379,8 @@ player = {
 };
 
 var filemanager = { 
-
     init : function(slideshow) {
-		
-		this.slideshow = slideshow;
+        this.slideshow = slideshow;
 		
         // Initialize the jQuery File Upload widget:
         $('#fileupload').fileupload({
@@ -423,9 +421,9 @@ var filemanager = {
                     e.remove();
                 });
             });
-			
-		// Make Preview button available
-		this.slideshow.updateButtons();
+
+        // Make Preview button available
+        this.slideshow.updateButtons();
     },
 
     progress : function (e, data) {
@@ -438,12 +436,15 @@ var filemanager = {
     },
 
     createElement : function() {
-	var item = $('<li><img /><div class="progressbar-overlay"></div></li>');
+	var item = $('<li><img /><div class="closebox">⨂</div><div class="progressbar-overlay"></div></li>');
         $('#image-list').append(item);
         $('#image-list').sortable('refresh');
         item.find('.progressbar-overlay').progressbar();
-        return item
-;
+        item.find('.closebox').click(function() {
+            item.remove();
+            $('#image-list').sortable('refresh');
+        });
+        return item;
     }
 };
 
