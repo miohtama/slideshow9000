@@ -36,7 +36,7 @@
 
     <h2>1. Select background music</h2>
 	<div id="song-selector">
-		  <select class="charcoal">
+		  <select name="song-selector" class="charcoal">
 		  	<option value="" selected="selected">Select background music</option>
             <option value="static/music/flautin.mp3">Flautin</option>
             <option value="static/music/ume.mp3">Ume</option>
@@ -59,7 +59,9 @@
 		        </div>
 		    </form>
 		</div>
-        <ul id="image-list"><li><img src="/static/images/coffee.jpg"/></li><li><img src="/static/images/kakku.png" /></li></ul>		
+        <ul id="image-list">
+        	<!-- <li><img src="/static/images/coffee.jpg"/></li><li><img src="/static/images/kakku.png" /></li> -->
+		</ul>		
     </div>
 
     <div id="bottom">
@@ -69,7 +71,7 @@
 	    <a name="preview"><!-- --></a>
 		
 		
-		<button id="preview-button" class="charcoal button">Preview</button>
+		<button id="preview-button" class="charcoal button">Preview &#9654;</button>
         <button id="stop-button" class="charcoal button">Stop</button>
 
 	</div>	

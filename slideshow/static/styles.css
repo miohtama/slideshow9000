@@ -36,6 +36,10 @@ input {
     -webkit-appearance: none;	
 }
 
+button:disabled {
+	opacity: 0.3;
+}
+
 /* Button layer for charcoal buttons */
 /* http://gradients.glrzad.com/ */
 .button {
