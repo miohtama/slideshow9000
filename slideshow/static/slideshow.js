@@ -23,7 +23,19 @@ slideshow = {
         this.clock = this.lastClock = 0;
 
         // Play loop control flag
-        this.play = false;    
+        this.play = false;   
+		
+		// Initialize button states
+		this.updateButtons();
+		
+		var self = this;
+		
+		$("select[name=song-selector]").change(function() {
+			self.updateButtons();
+		});
+		
+		
+	
     },  
         
     createCanvas : function() {
@@ -50,6 +62,30 @@ slideshow = {
         });
         return results;
     },
+	
+	/**
+	 * Update state of various buttons
+	 */
+	updateButtons : function() {
+		if(this.play) {
+			$("#preview-button").attr("disabled", true);
+			$("#stop-button").attr("disabled", false);
+		} else {
+			$("#preview-button").attr("disabled", false);
+			$("#stop-button").attr("disabled", true);
+		}
+		
+		// No images added
+		if(this.getImages().length == 0) {
+			$("#preview-button").attr("disabled", true);
+		}
+
+        // No song selected
+        if($("select[name=song-selector]").val() == "") {
+            $("#preview-button").attr("disabled", true);
+        }
+
+	},
     
     /**
      * Make a beat array where we have 90 BPM for one minute
@@ -79,7 +115,7 @@ slideshow = {
     
     createFileManager : function() {
         this.fileManager = filemanager;
-        this.fileManager.init();
+        this.fileManager.init(this);
     },
     
     createPreviewButton : function() {
@@ -89,6 +125,7 @@ slideshow = {
         $("#preview-button").click(function() {                             
             self.loop();            
             self.player.start();
+			self.updateButtons();
         });
         
     },
@@ -99,6 +136,7 @@ slideshow = {
         $("#stop-button").click(function() {                             
             self.stopLoop();            
             self.player.stop();
+            self.updateButtons();
         });
         
     },
@@ -341,7 +379,11 @@ player = {
 };
 
 var filemanager = { 
-    init : function() {
+
+    init : function(slideshow) {
+		
+		this.slideshow = slideshow;
+		
         // Initialize the jQuery File Upload widget:
         $('#fileupload').fileupload({
             dropZone: $('body'),
@@ -374,6 +416,9 @@ var filemanager = {
                     e.remove();
                 });
             });
+			
+		// Make Preview button available
+		this.slideshow.updateButtons();
     },
 
     createElement : function() {
