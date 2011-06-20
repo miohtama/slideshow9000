@@ -143,6 +143,7 @@ button {
    border-radius: 5px;
    box-shadow: 3px 3px 5px 2px #666;
    -moz-box-shadow: 3px 3px 5px 2px #666;
+   position: relative;
 }
 
 #image-list li.image-placeholder-style {
@@ -164,4 +165,21 @@ button {
 
 .fileupload-buttonbar {
     display: none;
+}
+
+.ui-progressbar-value { 
+    height: 8px;
+    background-image: url(ui-lightness/pbar-ani.gif);
+}
+
+.progressbar-overlay {
+    position: absolute;
+    width: 110px;
+    left: 5px;
+    margin-left: auto; 
+    margin-right: auto;
+    bottom: 5px;
+    z-index: 100;
+    height: 8px;
+    background-color: white;
 }

@@ -352,7 +352,8 @@ var filemanager = {
         $('#fileupload').fileupload({
             dropZone: $('body'),
             autoUpload: true,
-            add: this.add.bind(this)
+            add: this.add.bind(this),
+            progress: this.progress.bind(this)
         });
 	
         $('#image-list').sortable({
@@ -368,11 +369,17 @@ var filemanager = {
             elements.push(that.createElement());
         });
 
+        data.contextElements = elements;
         data.submit()
             .success(function (result, textStatus, jqXHR) { 
-                console.log(result);
                 result.forEach(function (e, i) {
                     elements[i].find('img').attr('src', e.name);
+
+                    // remove progress bar
+                    var e = elements[i].find('.progressbar-overlay');
+                    e.hide('slow', function () {
+                        e.remove();
+                    });
                 });
             })
             .error(function (jqXHR, textStatus, errorThrown) {
@@ -382,11 +389,22 @@ var filemanager = {
             });
     },
 
+    progress : function (e, data) {
+        if (data.contextElements) {
+            var progress = data.loaded * 100 / data.total;
+            data.contextElements.forEach(function (e) {
+                e.find('.progressbar-overlay').progressbar('value', progress);
+            });
+        }
+    },
+
     createElement : function() {
-	var img = $('<li><img /></li>');
-        $('#image-list').append(img);
+	var item = $('<li><img /><div class="progressbar-overlay"></div></li>');
+        $('#image-list').append(item);
         $('#image-list').sortable('refresh');
-        return img;
+        item.find('.progressbar-overlay').progressbar();
+        return item
+;
     }
 };
 
