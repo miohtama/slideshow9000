@@ -338,7 +338,12 @@ player = {
         if(this.sound) {
             this.sound.stop();
         }
-    }
+    },
+	
+	// http://introducinghtml5.com/examples/ch05/todataurl.html
+	saveToPng : function() {
+		
+	}
 };
 
 var filemanager = { 
