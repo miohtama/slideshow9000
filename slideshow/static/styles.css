@@ -15,6 +15,10 @@ body {
 
 h1 { font-family: 'Kranky', arial, serif; }
 
+h2 {
+	text-align: center;
+}
+
 /* Courtesy of http://stackoverflow.com/questions/6401993/charcoal-mock-up-like-border-effect-with-css3/6402175#6402175 */
 .charcoal{
 	border: double black 1em;
@@ -42,6 +46,7 @@ button:disabled {
 
 /* Button layer for charcoal buttons */
 /* http://gradients.glrzad.com/ */
+select,
 .button {
     background: #ccc;	
 }
@@ -168,4 +173,13 @@ button {
 
 .fileupload-buttonbar {
     display: none;
+}
+
+input[type=email] {
+	width: 300px;
+	margin-right: 0;
+}
+
+button[name=send] {
+	margin: 0 5px;
 }

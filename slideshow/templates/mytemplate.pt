@@ -37,7 +37,7 @@
     <h2>1. Select background music</h2>
 	<div id="song-selector">
 		  <select name="song-selector" class="charcoal">
-		  	<option value="" selected="selected">Select background music</option>
+		  	<option value="" selected="selected">Choose song</option>
             <option value="static/music/flautin.mp3">Flautin</option>
             <option value="static/music/ume.mp3">Ume</option>
 		  </select>
@@ -59,20 +59,31 @@
 		        </div>
 		    </form>
 		</div>
+		
         <ul id="image-list">
         	<!-- <li><img src="/static/images/coffee.jpg"/></li><li><img src="/static/images/kakku.png" /></li> -->
-		</ul>		
+		</ul>
+		
+		<div id="drop-note">
+            <span class="blinky">&gt; &gt; &gt; </span>
+			<span>Drop image files here</span> 
+            <span class="blinky">&lt; &lt; &lt; </span>
+		</div>		
     </div>
 
-    <div id="bottom">
-    	
-      <div class="bottom">
+
+    <h2>3. Watch it</h2>
+
     <div id="preview-controls" class="controls">
 	    <a name="preview"><!-- --></a>
-		
-		
+				
 		<button id="preview-button" class="charcoal button">Preview &#9654;</button>
-        <button id="stop-button" class="charcoal button">Stop</button>
+        <button id="stop-button" class="charcoal button">Stop &#9604;</button>
+
+        <div id="preview-note" style="display: none">
+        	<p>Preparing preview</p>
+			<p><img src="static/ajax-loader.gif" /></p>
+        </div>
 
 	</div>	
 	
@@ -88,9 +99,12 @@
 	    </canvas>
 	</div>
 	
+	
+	<h2>4. Send it</h2>
+
     <div id="send-controls" class="controls">
         <input class="charcoal" type=email name="email" placeholder="your@email.com" />        
-        <button id="send" class="charcoal button">Send</button>
+        <button id="send-button" class="charcoal button" name="send">Send &#9993;</button>
     </div>  
 	
   

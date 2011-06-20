@@ -67,6 +67,9 @@ slideshow = {
 	 * Update state of various buttons
 	 */
 	updateButtons : function() {
+
+        $("#send-button").attr("disabled", false);
+
 		if(this.play) {
 			$("#preview-button").attr("disabled", true);
 			$("#stop-button").attr("disabled", false);
@@ -78,11 +81,16 @@ slideshow = {
 		// No images added
 		if(this.getImages().length == 0) {
 			$("#preview-button").attr("disabled", true);
+            $("#send-button").attr("disabled", true);
+			$("#drop-note").show();
+		} else {
+			$("#drop-note").hide();
 		}
 
         // No song selected
         if($("select[name=song-selector]").val() == "") {
             $("#preview-button").attr("disabled", true);
+            $("#send-button").attr("disabled", true);
         }
 
 	},
@@ -123,8 +131,7 @@ slideshow = {
         var self = this;
 
         $("#preview-button").click(function() {                             
-            self.loop();            
-            self.player.start();
+            self.preparePreview();            
 			self.updateButtons();
         });
         
@@ -140,6 +147,27 @@ slideshow = {
         });
         
     },
+	
+	/**
+	 * Make sure we create all heavy objects before hand to get smooth animation
+	 */
+	preparePreview : function() {
+		
+		$("#preview-note").slideDown();
+
+        this.renderer = new Renderer();     
+        this.renderer.init(this, this.getImages(), this.beats);
+		
+		
+		var self = this;
+		
+		function done() {
+            $("#preview-note").slideUp();
+			self.loop();
+		}
+		
+		this.renderer.prepare(done);
+	},
 
     prepareTick : function() {
         setTimeout($.proxy(this.tick, this), 50);
@@ -158,6 +186,8 @@ slideshow = {
 		return;
 	   }
 	   
+	   this.player.start();
+	   
 	   // Reset clock
 	   this.clock = 0;
 	   
@@ -166,13 +196,13 @@ slideshow = {
 	   this.canvas.width = this.canvas.width;
 	   this.ctx = this.canvas.getContext("2d");
 		
-	   this.renderer = new Renderer();
-	   
-	   this.renderer.init(this, this.getImages(), this.beats);
 	   
 	   this.renderer.start();
 		
        this.play = true;
+	   
+	   this.updateButtons();
+	   
        console.log("Entering animation loop");
        this.prepareTick();  
     },
