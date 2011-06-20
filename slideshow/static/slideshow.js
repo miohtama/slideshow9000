@@ -355,7 +355,9 @@ var filemanager = {
             add: this.add.bind(this)
         });
 	
-        $('#image-list').sortable();
+        $('#image-list').sortable({
+            placeholder: "image-placeholder-style"
+        });
         $('#image-list').disableSelection();
     },
 
