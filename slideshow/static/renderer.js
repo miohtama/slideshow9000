@@ -275,7 +275,7 @@ $.extend(SlideInFadeOut.prototype, SlideshowObject.prototype, {
 	prepareIn : function(clock) {
 		// how many degrees we turn during 
 		
-		this.rotationTarget = splitrnd(Math.PI*0.03);			
+		this.rotationTarget = splitrnd(Math.PI*0.01);			
 		this.rotationStart = splitrnd(Math.PI*0.3); 
 		
 		// Where we start moving in
@@ -388,7 +388,8 @@ Renderer.prototype = {
 	
 	prepareNextImage : function(clock) {
 		
-		var img = this.images.pop();
+		var img = this.images.shift();
+		
 		if(img == null) {
 			// End of slideshow images
 			this.currentImage =  null;

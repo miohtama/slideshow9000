@@ -261,21 +261,17 @@ slideshow = {
     animate : function(delta, time) {
         
         var ctx = this.ctx;
-
-        var x = time * 5 / 1000;
-        
-
         // ctx.clearRect(0, 0, this.width, this.height); // clear canvas
         
         this.videoHelper.fetchFrame(time);
         
-        ctx.fillStyle = "rgb(200,0,0)";
-        ctx.fillRect (x+10, 10, x+55, 50);
+        // ctx.fillStyle = "rgb(200,0,0)";
+        // ctx.fillRect (x+10, 10, x+55, 50);
         
-        ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
-        ctx.fillRect (30, 30, 55, 50);
+        // ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+        // ctx.fillRect (30, 30, 55, 50);
 
-        var beat = this.calculateBeatIntensivity(time, 200, 5);         
+        // var beat = this.calculateBeatIntensivity(time, 200, 5);         
         
         this.renderer.render(ctx, this.width, this.height);
     }
