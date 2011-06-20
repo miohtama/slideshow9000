@@ -33,7 +33,8 @@
         <p id="slogan">Create a rhytmical slideshow easily</p>
     </div>
 	
-	
+
+    <h2>1. Select background music</h2>
 	<div id="song-selector">
 		  <select class="charcoal">
 		  	<option value="" selected="selected">Select background music</option>
@@ -42,6 +43,7 @@
 		  </select>
 	</div>
 	
+    <h2>2. Drag and drop your images in the box below</h2>
 	
 	<div id="drop-target" class="charcoal">		
 		<div id="fileupload">
@@ -56,15 +58,10 @@
 		            <button type="button" class="delete">Delete files</button>
 		        </div>
 		    </form>
-		    <div class="fileupload-content">
-		        <table class="files"></table>
-		        <div class="fileupload-progressbar"></div>
-		    </div>
 		</div>
+        <ul id="image-list"><li><img src="/static/images/coffee.jpg"/></li><li><img src="/static/images/kakku.png" /></li></ul>		
     </div>
 
-    <ul id="image-list"><li><img src="/static/images/coffee.jpg"/></li><li><img src="/static/images/kakku.png" /></li></ul>
-		
     <div id="bottom">
     	
       <div class="bottom">

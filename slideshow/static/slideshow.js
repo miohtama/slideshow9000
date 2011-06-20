@@ -347,22 +347,39 @@ var filemanager = {
         $('#fileupload').fileupload({
             dropZone: $('body'),
             autoUpload: true,
-            done: this.done.bind(this)
+            add: this.add.bind(this)
         });
-
+	
         $('#image-list').sortable();
         $('#image-list').disableSelection();
     },
 
-    done : function(e, data) {
-        data.result.forEach(function(item) {
-            console.log(item.name);
-            var filename = item.name;
-            var img = $('<li><img /></li>');
-            img.find('img').attr('src', filename);
-            $('#image-list').append(img);
-            $('#image-list').sortable('refresh');
+    add : function(e, data) {
+        var elements = [];
+        var that = this;
+        $.each(data.files, function (index, file) {
+            elements.push(that.createElement());
         });
+
+        data.submit()
+            .success(function (result, textStatus, jqXHR) { 
+                console.log(result);
+                result.forEach(function (e, i) {
+                    elements[i].find('img').attr('src', e.name);
+                });
+            })
+            .error(function (jqXHR, textStatus, errorThrown) {
+                elements.forEach(function (e) {
+                    e.remove();
+                });
+            });
+    },
+
+    createElement : function() {
+	var img = $('<li><img /></li>');
+        $('#image-list').append(img);
+        $('#image-list').sortable('refresh');
+        return img;
     }
 };
 
