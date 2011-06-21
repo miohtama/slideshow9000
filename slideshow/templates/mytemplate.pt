@@ -85,6 +85,11 @@
 			<p><img src="static/ajax-loader.gif" /></p>
         </div>
 
+
+        <div id="beat-detector" style="display: none">
+        	<!-- Animated only in dev mode -->
+        	<div id="beat"></div>
+        </div>
 	</div>	
 	
 	<!-- Hidden video control feeding frames to canvas -->

@@ -1,3 +1,12 @@
+/**
+ * Slideshow creator core
+ * 
+ * @copyright Copyright 2011 Mikko Ohtamaa
+ * 
+ * @author Mikko Ohtamaa, Antti Haapala
+ * 
+ */
+
 soundManager.url = 'static/swf/';
 soundManager.flashVersion = 8; // optional: shiny features (default = 8)
 soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
@@ -7,6 +16,9 @@ soundManager.debugMode = false;
 soundManager.timeout = 5000;
 
 slideshow = {
+
+    debug : true,
+
     init : function() {
         this.createCanvas();
         //this.createFakeBeats();
@@ -34,9 +46,29 @@ slideshow = {
 			self.updateButtons();
 		});
 		
+        this.lastVisualizedBeat = null;
 		
+		if(this.debug) {
+			this.initDebug();
+		}		
 	
     },  
+	
+	
+	/**
+	 * Prepare some stuff so that the human debugger does not need to make choices himself
+	 */
+	initDebug : function() {
+		
+		// Choose song
+		$("select[name=song-selector]").val("static/music/flautin.mp3");
+		
+		// Put in some images
+		$("#image-list").append("<img src=static/images/coffee.jpg width=128 height=128/>");
+		$("#image-list").append("<img src=static/images/kakku.png  width=128 height=128/>");
+		
+		this.updateButtons();
+	},
         
     createCanvas : function() {
         this.canvas = document.getElementById("slideshow");
@@ -134,6 +166,12 @@ slideshow = {
             self.preparePreview();            
 			self.updateButtons();
         });
+		
+		// Also create beat detector hider
+		
+		$("#slideshow").bind("dblclick", function() {
+			$("#beat-detector").show();
+		});
         
     },
 
@@ -325,6 +363,27 @@ slideshow = {
         return normalized;
 
     },
+	
+	/**
+	 * Helps to see if sound and image are in sync
+	 */
+	visualizeBeat : function(clock) {
+		
+		var lastBeat = this.findLastBeat();
+		
+		// On each new beat, randomize color
+		if(this.lastVisualizedBeat != lastBeat) {
+			var hue = 'rgb(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ')';  			 
+		    $("#beat").css("background", hue);
+			
+			
+			this.lastVisualizedBeat = lastBeat;  
+		} 
+	
+	    // Fade color away within one second of the beat	
+		var strenght = this.calculateBeatIntensivity(clock, 1000);
+		$("#beat").css("opacity", strenght);
+	},
     
     animate : function(delta, time) {
         
@@ -342,6 +401,8 @@ slideshow = {
         // var beat = this.calculateBeatIntensivity(time, 200, 5);         
         
         this.renderer.render(ctx, this.width, this.height);
+		
+		this.visualizeBeat(time);
     }
     
 };

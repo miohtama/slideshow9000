@@ -8,7 +8,7 @@ Bootstrapping
     easy_install virtualenv
     virtualenv pyramid
     source pyramid/bin/activate
-    easy_install Pyramid
+    easy_install Pyramid==1.0
     
 * Run project
 
