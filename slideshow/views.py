@@ -11,8 +11,6 @@ from pyramid.exceptions import NotFound
 from webob import Response
 from pyramid import config
 
-
-
 from mutagen.mp3 import MP3
 
 def create_mp3_list():
@@ -24,6 +22,11 @@ def create_mp3_list():
     path = os.path.join(os.path.dirname(__file__), "static", "music") 
     
     for file in os.listdir(path):
+        
+        if not file.endswith(".mp3"):
+            # .jsoen
+            continue
+        
         fname = os.path.join(path, file)
         audio = MP3(fname)
         
@@ -35,12 +38,12 @@ def create_mp3_list():
             title = file
             
         print "Found song " + fname + " " + title
-        songs["static/music" + file] = title
+        songs["static/music/" + file] = title
                 
     return songs
 
 
-# Scan available MP3s
+# Scan available MP3s on start-up
 songs = create_mp3_list()
 
 def my_view(request):

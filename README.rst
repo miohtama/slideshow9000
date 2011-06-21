@@ -9,7 +9,6 @@ Bootstrapping
     virtualenv pyramid
     source pyramid/bin/activate
     easy_install Pyramid==1.0
-    easy_install mutagen==1.20
     
 * Run project
 
@@ -28,6 +27,28 @@ Browser to the development server
     http://127.0.0.1:6543/
 
 
+Install Echo Nest Remix 
+-------------------------------
+
+Echo Nest Remix API works by uploading data to Echo Nest servers for audio analysis.
+First MP3 is decoded with ffmpeg and then raw data is uploaded(?).
+
+Needed for beat analysis. You need have ffmpeg development files installed::
+
+    # TODO - don't know what do here 
+    # Try Medibuntu repos?
+    
+Then install Echo Nest remix API:    
+
+::
+
+    source pyramid/bin/activate
+    svn checkout http://echo-nest-remix.googlecode.com/svn/trunk/ echo-nest-remix
+    cd echo-nest-remix
+    # Apparently this puts some crap to /usr/local and /usr/local/bin 
+    sudo python setup.py install
+    sudo ln -s `which ffmpeg` /usr/local/bin/en-ffmpeg
+
 Music
 -------
 
@@ -42,13 +63,14 @@ Adding your own songs
 
 Drop in your MP3 files in ``music`` folder.
 
-You need pyecho API key
+You need Echo Nest API key
 
-*   
+* http://developer.echonest.com/
 
 Rerun ``beatme.py`` to generate beat data as JSON::
 
-    export PYECHO_BLAA_BLAA=""
+    # NOT A REAL KEY
+    export ECHO_NEST_API_KEY=DH2I0GRG9VSVPDH 
     python beatme.py    
 
 
@@ -59,6 +81,14 @@ Videos
 
 Sources
 --------
+
+* http://oksoclap.com/canvasoptimizations
+
+* http://echo-nest-remix.googlecode.com/svn/trunk/apidocs/index.html
+
+* http://lindsay.at/work/remix/overview.html
+
+* http://code.google.com/p/echo-nest-remix/
 
 * https://github.com/jquery/jquery-mobile
 

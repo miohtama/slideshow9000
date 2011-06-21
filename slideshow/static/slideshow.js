@@ -23,32 +23,29 @@ slideshow = {
      * It's time for rock'n' roll babe
      */
     init : function() {
+
+        // Animation time since start in ms
+        this.clock = this.lastClock = 0;
+
+        // Play loop control flag
+        this.play = false;   
+        
+        // No MP3 in
+        this.songLoaded = false;
+        this.analysis = null;
+						
         this.createCanvas();
-        //this.createFakeBeats();
-        this.beats = [193, 1693, 3195, 4691, 6188, 7692, 9195, 10692, 12191, 13694, 15197, 16693, 18193, 19696, 21200, 22699, 24199, 25701, 27198, 28696, 30199, 31698, 33198, 34696, 36200, 37708, 39199, 40698, 42197, 43701, 45198, 46700, 48196, 49699, 51199, 52696, 54196, 55699, 57195, 58696, 60199, 61701, 63199, 64696, 66198, 67703, 69203, 70732, 72205, 73693, 75198, 76701, 78192, 79695, 81199, 82695, 84192, 85689, 87191, 88694, 90191, 91695, 93196, 94694, 96193, 97697, 99196, 100698, 102199, 103695, 105198, 106702, 108203, 109702, 111198, 112699, 114200, 115697, 117191, 118692, 120196, 121699, 123200, 124699, 126197, 127694, 129194, 130695, 132197, 133693, 135263, 136989, 138580, 140078, 141576, 143077, 144575, 146076, 147573, 149070, 150570, 152075, 153578, 155076, 156577, 158077, 159573, 161073, 162572, 164067, 165571, 167068, 168566, 170069, 171574, 173084, 174588, 176078, 177576, 179072, 180571, 182069, 183569, 185070, 186574, 188073, 189581, 191077, 192568, 194065, 195571, 197068, 198565, 200065, 201568, 203072, 204567, 206070, 207570, 209067, 210566, 212069, 213566, 215065, 216561, 218071, 219574, 221073, 222571, 224079, 225572, 227068, 228566, 230063, 231569, 233069, 234567, 236068, 237570, 239069, 240568, 242070, 243568, 245071, 246572, 248070, 249571, 251076, 252574, 254074, 255576, 257069, 258571, 260070, 261572, 263070, 264568, 266068, 267572, 269073, 270572, 272069, 273565, 275065, 276565, 278066, 279575, 281073, 282577, 284072, 285576, 287071, 288572, 290070, 291568, 293069, 294571, 296076, 297571, 299070, 300566, 302068, 303571, 305068, 306570, 308078, 309581, 311074, 312573, 314068, 315566, 317064, 318563, 320065, 321564, 323064, 324567, 326061, 327564, 329062, 330574, 332076, 333573, 335073, 336572, 338073, 339563, 341070, 342571, 344067, 345564, 347068, 348566, 350065, 351576, 353072, 354566, 356064, 357565, 359070, 360566, 362065, 363562, 365066, 366568, 368067, 369565, 371067, 372564, 374067, 375564, 377055, 378549, 380060, 381560, 383061, 384564, 386066, 387568, 389069, 390569, 392059, 393562, 395065, 396565, 398067, 399571, 401068, 402567, 404069, 405572, 407068, 408568, 410069, 411569, 413065, 414561, 416065, 417568, 419067, 420570, 422067, 423564, 425069, 426567, 428064, 429566, 431068, 432603, 434075, 435539];
 
         this.createPlayer();        
         this.createFileManager();        
         this.createVideoHelper();       
         this.createPreviewButton();
         this.createStopButton();
-        
-        
-        // Animation time since start in ms
-        this.clock = this.lastClock = 0;
-
-        // Play loop control flag
-        this.play = false;   
-		
+		this.createSongSelector();
+		                		
 		// Initialize button states
 		this.updateButtons();
-		
-		var self = this;
-		
-		$("select[name=song-selector]").change(function() {
-			self.updateButtons();
-		});
-		
+				
         this.lastVisualizedBeat = null;
 		
 		if(this.debug) {
@@ -69,6 +66,8 @@ slideshow = {
 		// Put in some images
 		$("#image-list").append("<img src=static/images/coffee.jpg width=128 height=128/>");
 		$("#image-list").append("<img src=static/images/kakku.png  width=128 height=128/>");
+				
+		this.loadSong("static/music/flautin.mp3");
 		
 		this.updateButtons();
 	},
@@ -88,6 +87,17 @@ slideshow = {
         var v =  document.getElementById("background-video");
         this.videoHelper = new CanvasVideoHelper(this.canvas, v, this.width, this.height);
     },
+	
+	createSongSelector : function() {
+		
+		var self = this;
+		
+        $("select[name=song-selector]").change(function() {         
+            var song = $("select[name=song-selector]").val();                       
+            self.loadSong(song);            
+            self.updateButtons();
+        });		
+	},
     
     getImages : function () {
         var imgs = $('#image-list img');
@@ -123,37 +133,17 @@ slideshow = {
 		}
 
         // No song selected
-        if($("select[name=song-selector]").val() == "") {
+        if($("select[name=song-selector]").val() == "" || this.songLoaded == false) {
             $("#preview-button").attr("disabled", true);
             $("#send-button").attr("disabled", true);
         }
 
 	},
     
-    /**
-     * Make a beat array where we have 90 BPM for one minute
-     */
-    createFakeBeats : function() {
-        
-        this.beats = [];
-        
-        var step = 120/60*1000;
-        
-        var i;
-        var clock = 0;
-        
-        for(i=0; i<60; i++) {
-            this.beats.push(clock);
-            clock += step;
-        }
-        
-        // console.log("Got beats:" + this.beats);
-    },
     
     createPlayer : function() {
         this.player = player;
         this.player.init($.proxy(this.onClock, this));
-        this.player.loadSong();
     },
     
     createFileManager : function() {
@@ -197,7 +187,7 @@ slideshow = {
 		$("#preview-note").slideDown();
 
         this.renderer = new Renderer();     
-        this.renderer.init(this, this.getImages(), this.beats);
+        this.renderer.init(this, this.getImages(), this.analysis);
 		
 		
 		var self = this;
@@ -283,96 +273,21 @@ slideshow = {
       
     },
     
-    /**
-     * Find next beat from the array of all beats.
-     * 
-     * @param clock Clock position
-     * 
-     * @param skip Skip rate. 1= every beat, 2 = every second beat
-     */
-    findNextBeat :function(clock, skip) {
-        
-        var beat = 0;
-        var i = 0;
-        
-        this.beats.forEach(function(t) {
-        
-          //if(i % skip != 0) {
-         //     return;
-          //}
-        
-          //console.log("Test: " + clock + " " + t);
-          if(t < clock) {           
-            beat = t;
-          }
-          
-          i+=1;
-        });
-        
-        return beat;
-    },
-    
-    /**
-     * Find last beat from the array of all beats.
-     * 
-     * @param clock Clock position
-     * 
-     * @param skip Skip rate. 1= every beat, 2 = every second beat
-     */
-    findLastBeat :function(clock, skip) {
-        
-        var beat = 0;
-        
-        var beats = this.beats;
-        var i;
-        for(i=0; i<beats.length;i++) {
-            var t = beats[i];                       
-            if(t > clock) {
-                break;
-            }           
-            beat = t;                       
-        }
-                
-        return beat;
-    },
-        
-    
-    /**
-     * Calculate beat intensivity as linear function.
-     * 
-     *  Like this:
-     *     
-     *    /\
-     *   /  \
-     *  /    \
-     *        [window/2]
-     *  
-     * 
-     * @param {Object} clock animation time in ms
-     * @param {Object} window 0.... 100% beat intensivity in ms
-     */
-    calculateBeatIntensivity : function(clock, window, skip) {
-        
-        var beat = this.findLastBeat(clock, skip);
-        
-        var distance = clock - beat;       
-
-            
-        // -1 ... 1 intensivity within beat window
-        var normalized = (window-distance) / window;                    
-
-        // console.log("Clock:" + clock + " beat:" + beat + " window:" + window + " skip:" + skip + " distance:" + distance);
-
-        return normalized;
-
-    },
-	
 	/**
 	 * Helps to see if sound and image are in sync
 	 */
 	visualizeBeat : function(clock) {
 		
-		var lastBeat = this.findLastBeat();
+		var lastBeat = this.analysis.findLastBeat(clock);
+		
+		//console.log("Last beat is:" + lastBeat);
+		console.log(lastBeat);
+		
+		if(!lastBeat) {
+			return;
+		}			
+		
+		lastBeat = lastBeat.start;
 		
 		// On each new beat, randomize color
 		if(this.lastVisualizedBeat != lastBeat) {
@@ -384,7 +299,7 @@ slideshow = {
 		} 
 	
 	    // Fade color away within one second of the beat	
-		var strenght = this.calculateBeatIntensivity(clock, 1000);
+		var strenght = this.analysis.calculateBeatIntensivity(clock, 1000);
 		$("#beat").css("opacity", strenght);
 	},
     
@@ -406,7 +321,62 @@ slideshow = {
         this.renderer.render(ctx, this.width, this.height);
 		
 		this.visualizeBeat(time);
-    }
+    },
+	
+	
+	/**
+	 * Load MP3, analysis data and set-up the player.
+	 * 
+	 * @param {Object} uri
+	 */
+	loadSong : function(uri) {
+				
+		console.log("Loading song:" + uri);
+		
+        this.songLoaded = false;
+		this.analysis = null;
+		
+		if(uri == "") {
+			// unload
+			return;
+		}						 
+						 
+		$("#load-song-name").text(uri);		
+		$("#load-song-note").slideDown();
+				
+		// XXX: race condition here with fast UI choices
+		var song = false;
+		var dataLoaded = false;
+		
+		function finished() {
+			
+			console.log("Song load process " + song + " " + dataLoaded);
+			
+			if(song && dataLoaded) {
+		      $("#load-song-note").slideUp();		
+			}
+			
+			this.songLoaded = true;
+			this.updateButtons();
+		}
+		
+		function gotSong() {
+			song = true;
+			$.proxy(finished, this)();
+		}
+		
+		function gotData(data) {
+		  this.analysis = new Analysis(data);
+		  dataLoaded = true;
+		  $.proxy(finished, this)();	
+		}
+		
+		var dataURI = uri.replace(".mp3", ".json");
+		
+		this.player.loadSong(uri, $.proxy(gotSong, this))
+		
+		$.getJSON(dataURI, $.proxy(gotData, this));
+	}
     
 };
 
@@ -414,46 +384,83 @@ slideshow = {
  * Music player helper
  */
 player = {
-    init : function(clockCallback) {
-        this.soundPos = 0;      
+    
+	init : function(clockCallback) {
+    
+	
+	   
+	    this.soundPos = 0;      
         this.sound = null;
 		// this.startCallback = startCallback;
         this.clockCallback = clockCallback;
-        this.loadSong();
+		this.loaded = false;
+		
+		var self = this;
+		
+		soundManager.onready(function() {
+			self.loaded = true;
+		});
+	
+		soundManager.load('slideshow-sound');
     },
     
-    loadSong : function() {
+	/**
+	 * Load MP3 to player
+	 * 
+	 * @param {Object} uri
+	 * @param {Object} callback
+	 */
+    loadSong : function(uri, callback) {
 
         var self = this;
+		
+		// Waiting for Flash
+		if(!this.loaded) {
+			soundManager.onready(function() {
+				self.loaded = true;
+				self.loadSong(uri, callback);				
+			});			
+			return;
+		}
 
-        soundManager.onready(function(){        
-            var thisSound = soundManager.createSound({
-                id: 'slideshow',
-                url: '/static/music/flautin.mp3',
-                autoLoad: true,
-                autoPlay: false,
-                debugMode: false,
-                
-                onload: function(){
-                    var that = this;
-                },
-				
-				onplay : function() {
-					//self.startCallback();
-				},
-                
-                whileloading: function() {
-                },
-                
-                whileplaying: function(){
-                    self.clockCallback(this.position);
-                },
-                
-                volume: 100
-            });
+        console.log("Creating sound:" + uri);
+		
+        // Need soundManager.onready(function() here
+		        
+        this.sound = soundManager.createSound({
+            id: 'slideshow-sound-' + uri,
+            url: uri,
+            autoLoad: false,
+            autoPlay: false,
+            debugMode: false,
             
-            self.sound = thisSound;
+            onload: function(){
+                console.log("MP3 loaded");
+				if(callback) {
+					callback();
+				}												
+            },
+			
+			onplay : function() {
+				//self.startCallback();
+			},
+            
+            whileloading: function() {
+				console.log("while loading");
+            },
+            
+            whileplaying: function(){
+                self.clockCallback(this.position);
+            },
+            
+            volume: 100
         });
+        
+		
+        this.sound.load();
+		
+		console.log("Kicked in");
+		
     },
     
     start : function() {					

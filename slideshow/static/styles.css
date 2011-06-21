@@ -70,6 +70,10 @@ select {
 	width: 400px;
 }
 
+#load-song-note {
+	text-align: center;
+}
+
 #drop-target {
 	width: 100%;
 	margin: 10px auto;
@@ -247,4 +251,9 @@ button[name=send] {
 #beat {
 	width: 50px;
 	height: 50px;
+}
+
+#footer {
+	text-align: center;
+	color: #888;
 }

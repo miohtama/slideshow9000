@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal">
 <head>
-  <title>S1id3sh0w alpha</title>
+  <title>The Little HTML5 Slideshow Creator</title>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
   <meta name="keywords" content="python web application" />
   <meta name="description" content="pyramid web application" />
@@ -21,6 +21,7 @@
   <script type="text/javascript" src="${request.static_url('slideshow:static/js/jquery.easing.1.3.js')}"></script>
   <script type="text/javascript" src="${request.static_url('slideshow:static/video.js')}"></script>
   <script type="text/javascript" src="${request.static_url('slideshow:static/renderer.js')}"></script>
+  <script type="text/javascript" src="${request.static_url('slideshow:static/analysis.js')}"></script>  
   <script type="text/javascript" src="${request.static_url('slideshow:static/slideshow.js')}"></script>
 
 </head>
@@ -28,7 +29,7 @@
   <div id="wrap">
   	
     <div id="top">
-        <h1>Slideshow Maker Demo</h1>
+        <h1>The Little HTML5 Slideshow Creator</h1>
 
         <p id="slogan">Create a rhytmical slideshow easily</p>
     </div>
@@ -44,6 +45,12 @@
 	            <option tal:attributes="value python:song[0]" tal:content="python:song[1]" />
 			</tal:options>
 		  </select>
+	</div>
+	
+	
+	<div id="load-song-note" style="display: none">
+		  <p>Loading MP3: <span id=load-song-text />
+		  <p><img src="static/ajax-loader.gif" /></p>
 	</div>
 	
     <h2>2. Drag and drop your images in the box below</h2>
@@ -115,6 +122,9 @@
         <button id="send-button" class="charcoal button" name="send">Send &#9993;</button>
     </div>  
 	
-  
+
+    <div id="footer">
+    	<p>Copyright 2011 Mikko Ohtamaa & co.</p>
+    </div>  
 </body>
 </html>

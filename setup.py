@@ -4,7 +4,7 @@ import sys
 from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, 'README.txt')).read()
+README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 requires = [
@@ -15,13 +15,14 @@ requires = [
     'zope.sqlalchemy',
     'WebError',
     'pyechonest',
+    'mutagen==1.20'
 ]
 
 if sys.version_info[:3] < (2,5,0):
     requires.append('pysqlite')
 
 setup(name='slideshow',
-      version='0.0',
+      version='1.0',
       description='slideshow',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
@@ -30,8 +31,8 @@ setup(name='slideshow',
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
         ],
-      author='',
-      author_email='',
+      author='Mikko Ohtamaa',
+      author_email='mikko@mfabrik.com',
       url='',
       keywords='web wsgi bfg pylons pyramid',
       packages=find_packages(),

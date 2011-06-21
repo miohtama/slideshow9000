@@ -362,7 +362,7 @@ function Renderer() {
 
 Renderer.prototype = {
 
-    init : function(slideshow, images, beats) {
+    init : function(slideshow, images, analysis) {
 		
 		this.slideshow = slideshow;
 
@@ -380,7 +380,7 @@ Renderer.prototype = {
 		this.images = images.slice(0); // make a working copy
 		
 		// Something we can align our image transitions
-		this.beats = beats;
+		this.analysis = analysis;
 		
 		this.imagesProcessed = 0;
 	},
@@ -479,7 +479,8 @@ Renderer.prototype = {
 	},
 	
 	findNextBeat : function(clock, window) {
-		return this.slideshow.findNextBeat(clock, window);
+		var beat = this.analysis.findNextBeat(clock, window);
+		return beat.start;
 	}
 	
 	
