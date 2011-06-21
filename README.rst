@@ -9,6 +9,7 @@ Bootstrapping
     virtualenv pyramid
     source pyramid/bin/activate
     easy_install Pyramid==1.0
+    easy_install mutagen==1.20
     
 * Run project
 
@@ -30,11 +31,26 @@ Browser to the development server
 Music
 -------
 
-CC Licensed 
+Out of the box music CC Licensed 
 
 * http://www.jamendo.com/en/artist/Emerald_Park
 
 * http://www.jamendo.com/en/artist/manguer
+
+Adding your own songs
+==========================
+
+Drop in your MP3 files in ``music`` folder.
+
+You need pyecho API key
+
+*   
+
+Rerun ``beatme.py`` to generate beat data as JSON::
+
+    export PYECHO_BLAA_BLAA=""
+    python beatme.py    
+
 
 Videos
 ----------

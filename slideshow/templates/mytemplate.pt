@@ -36,10 +36,13 @@
 
     <h2>1. Select background music</h2>
 	<div id="song-selector">
-		  <select name="song-selector" class="charcoal">
-		  	<option value="" selected="selected">Choose song</option>
-            <option value="static/music/flautin.mp3">Flautin</option>
-            <option value="static/music/ume.mp3">Ume</option>
+		  <select name="song-selector" class="charcoal" >
+
+            <option value="" selected="selected">Choose song</option>
+		  	
+			<tal:options repeat="song python:songs.items()">
+	            <option tal:attributes="value python:song[0]" tal:content="python:song[1]" />
+			</tal:options>
 		  </select>
 	</div>
 	

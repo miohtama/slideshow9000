@@ -19,6 +19,9 @@ slideshow = {
 
     debug : true,
 
+    /**
+     * It's time for rock'n' roll babe
+     */
     init : function() {
         this.createCanvas();
         //this.createFakeBeats();

@@ -1,20 +1,58 @@
-from slideshow.models import DBSession
-from slideshow.models import MyModel
-from pyramid.exceptions import NotFound
-from webob import Response
-
 import re
 import os
 import shutil
 import hashlib
-
-from pyramid import config
 import time
+from odict import odict
+
+from slideshow.models import DBSession
+from slideshow.models import MyModel
+from pyramid.exceptions import NotFound
+from webob import Response
+from pyramid import config
+
+
+
+from mutagen.mp3 import MP3
+
+def create_mp3_list():
+    """
+    Read all songs in music folder and get their titles for the <select>
+    """    
+    songs = odict()
+                 
+    path = os.path.join(os.path.dirname(__file__), "static", "music") 
+    
+    for file in os.listdir(path):
+        fname = os.path.join(path, file)
+        audio = MP3(fname)
+        
+        # Parse ID3 tag
+        tits = audio.get("TIT2", None)
+        if tits:
+            title = tits.text[0]
+        else:
+            title = file
+            
+        print "Found song " + fname + " " + title
+        songs["static/music" + file] = title
+                
+    return songs
+
+
+# Scan available MP3s
+songs = create_mp3_list()
 
 def my_view(request):
+    """
+    Home view
+    """
+    
     dbsession = DBSession()
     root = dbsession.query(MyModel).filter(MyModel.name==u'root').first()
-    return {'root':root, 'project':'slideshow'}
+    
+    
+    return {'root':root, 'project':'slideshow', 'songs' : songs}
 
 
 def set_upload_dir(dirname):
