@@ -163,7 +163,7 @@ slideshow = {
 		// Also create beat detector hider
 		
 		$("#slideshow").bind("dblclick", function() {
-			$("#beat-detector").show();
+			$("#beat-detector").toggle();
 		});
         
     },
