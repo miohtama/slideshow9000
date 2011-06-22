@@ -27,7 +27,7 @@ function Analysis(json) {
 		this.minBeatConfidence = 0;
 	} else {
 	   // Use beats by arbitary value
-	   this.minBeatConfidence = 0.7;
+	   this.minBeatConfidence = 0.5;
 	}
 	
 	console.log("Using default beat confidence threshold of " + this.minBeatConfidence);
@@ -53,24 +53,19 @@ Analysis.prototype = {
 		
 		var confidenceThreshold = this.minBeatConfidence;
         
-        this.data.beats.forEach(function(t) {
-        
-		
-		  if(t.confidence < confidenceThreshold) {
-		  	return;
-		  }
-          //if(i % skip != 0) {
-         //     return;
-          //}
-        
-          //console.log("Test: " + clock + " " + t);
-          if(t.start < clock) {           
-            beat = t;
-          }
-          
-          i+=1;
-        });
-        
+		for(i=0; i<this.data.beats.length; i++) {
+            var t = this.data.beats[i];
+			if(t.confidence < confidenceThreshold) {
+                continue;
+            }
+			
+			if(t.start > clock) {
+				beat = t;
+				break;
+			}
+				
+		}
+		        
         return beat;
     },
     

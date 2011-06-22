@@ -96,7 +96,11 @@ slideshow = {
 		
 		var self = this;
 		
-        $("select[name=song-selector]").change(function() {         
+        $("select[name=song-selector]").change(function() {     
+		    
+			if (self.play) {
+				self.stop();
+			}  
             var song = $("select[name=song-selector]").val();                       
             self.loadSong(song);            
             self.updateButtons();
@@ -171,14 +175,18 @@ slideshow = {
 		});
         
     },
+	
+	stop : function() {
+            this.stopLoop();            
+            this.player.stop();
+            this.updateButtons();		
+	},
 
     createStopButton : function() {
         var self = this;
         
-        $("#stop-button").click(function() {                             
-            self.stopLoop();            
-            self.player.stop();
-            self.updateButtons();
+        $("#stop-button").click(function() {
+			self.stop();                             
         });
         
     },
@@ -473,7 +481,13 @@ player = {
         });
         
 		
+		
         this.sound.load();
+		
+		if(this.sound.loaded) {
+			// Already loaded before
+			callback();
+		}
 		
 		console.log("Kicked in");
 		

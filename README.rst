@@ -26,6 +26,15 @@ Browser to the development server
 
     http://127.0.0.1:6543/
 
+Production run
+---------------------------------
+
+Log in as ``slideshow`` user and start WSGI server through screen::
+
+    script /dev/null # enable screen under sudo
+    screen -x
+    source ~/pyramid/bin/activate
+    paster serve production.ini
 
 Install Echo Nest Remix 
 -------------------------------

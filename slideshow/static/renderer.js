@@ -140,13 +140,16 @@ SlideshowObject.prototype = {
                 // Find the beat when we are going out, 
 				var estimate = clock + this.renderer.onScreenTime;
 				
-				var beat = this.renderer.findNextBeat(estimate, 1000);
+				var beat = this.renderer.findNextBeat(estimate, 2000);
+								
 				var timeOnScreen;
 				
-				if(beat != null) {				
-				    console.log("Got out time " + clock + " " + estimate + " " + beat);			
-				    timeOnScreen = beat - clock;
+				if(beat != null) {
+					var bt = beat.start;
+					timeOnScreen = bt - clock;				
+				    console.log("--- Got out time with beat clock:" + clock + " estimate:" + estimate + " beat:" + beat.start + " screen time:" + timeOnScreen + " threshold:" + this.renderer.analysis.minBeatConfidence + " confidence:" + beat.confidence);							    
 				} else {
+					console.log("--- No beat to go out " + clock + " " + estimate + " " + beat);
 					timeOnScreen = this.renderer.onScreenTime;
 				}
 				
@@ -488,7 +491,14 @@ Renderer.prototype = {
 	},
 	
 	findNextBeat : function(clock, window) {
-		var beat = this.analysis.findNextBeat(clock, window);
+		
+		var beat = this.analysis.findNextBeat(clock);
+		
+		if(beat.start - clock > window) {
+			return null;
+		}
+		
+		return beat;
 	}
 	
 	

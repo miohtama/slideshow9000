@@ -75,7 +75,7 @@ select {
 }
 
 #drop-target {
-	width: 100%;
+	width: 700px;
 	margin: 10px auto;
 	min-height: 150px;
 }
