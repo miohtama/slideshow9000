@@ -50,7 +50,11 @@ slideshow = {
 		
 		if(this.debug) {
 			this.initDebug();
-		}		
+		}
+		
+		$("#send-button").click(function() {
+			alert("Still a demo :)");
+		});	
 	
     },  
 	
