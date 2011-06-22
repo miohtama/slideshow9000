@@ -248,9 +248,13 @@ button[name=send] {
 
 /* Beat detector */
 
+#beat-data {
+	font-family: arial, serif;
+}
+
 #beat {
 	width: 50px;
-	height: 50px;
+	height: 50px;    
 }
 
 #footer {

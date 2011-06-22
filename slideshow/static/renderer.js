@@ -68,9 +68,9 @@ function createFramedImage(img) {
 
 // Randomizer helper to place elements
 function splitrnd(max) {
-    return Math.random(max) - max/2;
+	max = max*2;
+    return Math.random()*max - max/2;
 }
-
 
 /**
  * Base object for different slideshow slide-ins and outs
@@ -139,11 +139,16 @@ SlideshowObject.prototype = {
                 // Always go out on a beat
                 // Find the beat when we are going out, 
 				var estimate = clock + this.renderer.onScreenTime;
+				
 				var beat = this.renderer.findNextBeat(estimate, 1000);
+				var timeOnScreen;
 				
-				console.log("Got out time " + clock + " " + estimate + " " + beat);
-				
-				var timeOnScreen = beat - clock;
+				if(beat != null) {				
+				    console.log("Got out time " + clock + " " + estimate + " " + beat);			
+				    timeOnScreen = beat - clock;
+				} else {
+					timeOnScreen = this.renderer.onScreenTime;
+				}
 				
 				this.changeState("onscreen", clock, timeOnScreen);
 
@@ -283,8 +288,8 @@ $.extend(SlideInFadeOut.prototype, SlideshowObject.prototype, {
 	prepareIn : function(clock) {
 		// how many degrees we turn during 
 		
-		this.rotationTarget = splitrnd(Math.PI*0.01);			
-		this.rotationStart = splitrnd(Math.PI*0.3); 
+		this.rotationTarget = splitrnd(Math.PI*0.05);			
+		this.rotationStart = splitrnd(Math.PI*0.5); 
 		
 		// Where we start moving in
 		this.sx = splitrnd(0.3);
@@ -295,7 +300,7 @@ $.extend(SlideInFadeOut.prototype, SlideshowObject.prototype, {
 	
 	doIn : function(clock) {
 				
-		var size = this.calculateEasing(clock, 0, 1);		
+		var size = this.calculateEasing(clock, 0, 1, "easeInSine");		
         if(isNaN(size)) {
 			size = 0;
 		}
@@ -317,14 +322,18 @@ $.extend(SlideInFadeOut.prototype, SlideshowObject.prototype, {
 	prepareOnScreen : function(clock) {
 		this.sx = this.x;
 		this.sy = this.y;
-		this.tx = this.x + 0.1;
-		this.ty = this.y + 0.1;
+		this.tx = this.x + splitrnd(0.05);
+		this.ty = this.y + splitrnd(0.05);
+		
 	},
 	
 	// Some linear movement when we are on the screen itself
 	doOnScreen : function(clock) {	   
-        this.x = this.calculateEasing(clock, this.sx, this.tx);
-		this.y = this.calculateEasing(clock, this.sy, this.ty);
+	
+	    //console.log("sx:" + this.sx + " tx:" + this.tx);
+	
+        this.x = this.calculateEasing(clock, this.sx, this.tx, "swing");
+		this.y = this.calculateEasing(clock, this.sy, this.ty, "swing");
 	},
 	
 	prepareOut : function(clock) {
@@ -480,7 +489,6 @@ Renderer.prototype = {
 	
 	findNextBeat : function(clock, window) {
 		var beat = this.analysis.findNextBeat(clock, window);
-		return beat.start;
 	}
 	
 	

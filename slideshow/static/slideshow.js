@@ -17,7 +17,7 @@ soundManager.timeout = 5000;
 
 slideshow = {
 
-    debug : true,
+    debug : false,
 
     /**
      * It's time for rock'n' roll babe
@@ -278,29 +278,43 @@ slideshow = {
 	 */
 	visualizeBeat : function(clock) {
 		
-		var lastBeat = this.analysis.findLastBeat(clock);
+		var lastBeat = this.analysis.findLastBeat(clock, 1, -0.001);
+				
+		var lastBar = this.analysis.findLast(this.analysis.data.bars, clock, 1, -0.001);
+		
+		//console.log(this.analysis.data.beats);
 		
 		//console.log("Last beat is:" + lastBeat);
-		console.log(lastBeat);
+		//console.log(lastBeat);
 		
 		if(!lastBeat) {
 			return;
 		}			
+		
+		$("#beat-data").text(JSON.stringify(lastBeat) + " " + JSON.stringify(lastBar));
 		
 		lastBeat = lastBeat.start;
 		
 		// On each new beat, randomize color
 		if(this.lastVisualizedBeat != lastBeat) {
 			var hue = 'rgb(' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ',' + (Math.floor(Math.random() * 256)) + ')';  			 
-		    $("#beat").css("background", hue);
-			
-			
+		    $("#beat").css("background", hue);						
 			this.lastVisualizedBeat = lastBeat;  
 		} 
+		
+		var diff = clock - lastBeat; 
+		
+		var intensivity = 0;
+		if(diff < 1000) {
+			intensivity = (1000 - diff) / 1000;
+		} else {
+			intensivity = 0;
+		}
+		
+		//console.log(diff + " " + intensivity);
 	
 	    // Fade color away within one second of the beat	
-		var strenght = this.analysis.calculateBeatIntensivity(clock, 1000);
-		$("#beat").css("opacity", strenght);
+		$("#beat").css("opacity", intensivity);
 	},
     
     animate : function(delta, time) {
@@ -386,9 +400,7 @@ slideshow = {
 player = {
     
 	init : function(clockCallback) {
-    
-	
-	   
+   
 	    this.soundPos = 0;      
         this.sound = null;
 		// this.startCallback = startCallback;
@@ -446,7 +458,7 @@ player = {
 			},
             
             whileloading: function() {
-				console.log("while loading");
+				// console.log("while loading");
             },
             
             whileplaying: function(){
@@ -480,6 +492,7 @@ player = {
 };
 
 var filemanager = { 
+  
     init : function(slideshow) {
         this.slideshow = slideshow;
 		
@@ -489,7 +502,9 @@ var filemanager = {
             autoUpload: true,
             add: this.add.bind(this),
             progress: this.progress.bind(this)
-        });
+        }).bind('fileuploaddrop', function(e, data){
+			console.log("Drop");
+		});
 	
         $('#image-list').sortable({
             placeholder: "image-placeholder-style"
@@ -498,6 +513,9 @@ var filemanager = {
     },
 
     add : function(e, data) {
+		
+		console.log("add");
+		
         var elements = [];
         var that = this;
         $.each(data.files, function (index, file) {
@@ -537,7 +555,7 @@ var filemanager = {
     },
 
     createElement : function() {
-	var item = $('<li><img /><div class="closebox">⨂</div><div class="progressbar-overlay"></div></li>');
+	   var item = $('<li><img /><div class="closebox">⨂</div><div class="progressbar-overlay"></div></li>');
         $('#image-list').append(item);
         $('#image-list').sortable('refresh');
         item.find('.progressbar-overlay').progressbar();

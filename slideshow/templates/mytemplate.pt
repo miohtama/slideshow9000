@@ -99,11 +99,14 @@
         <div id="beat-detector" style="display: none">
         	<!-- Animated only in dev mode -->
         	<div id="beat"></div>
+			<div id="beat-data">
+				
+			</div>
         </div>
 	</div>	
 	
 	<!-- Hidden video control feeding frames to canvas -->
-	<video id="background-video" style="display: none">
+	<video id="background-video" style="display: none" loop>
         <source src=static/videos/ambient.ogv type=video/ogg>
         <source src=static/videos/ambient.mp4 type=video/mp4>
 	</video>

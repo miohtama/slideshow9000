@@ -7,10 +7,30 @@
  */
 
 function Analysis(json) {
+
 	this.data = json;
+
+
+    // Search max confidence in beats
+    var maxBeatConfidence = 0;	
+	
+	this.data.beats.forEach(function(b) {
+		if(b.confidence > maxBeatConfidence) {
+			maxBeatConfidence = b.confidence;
+		}
+	});
 	
 	// How sure we must be about the beat to accept it
-	this.minBeatConfidence = 0.7;
+	
+	if(maxBeatConfidence == 0) {
+		// Echo Nest could not analyze confidence, but we still got beat list
+		this.minBeatConfidence = 0;
+	} else {
+	   // Use beats by arbitary value
+	   this.minBeatConfidence = 0.7;
+	}
+	
+	console.log("Using default beat confidence threshold of " + this.minBeatConfidence);
 	
 }
 
@@ -63,13 +83,13 @@ Analysis.prototype = {
      * 
      * @return AudioQuantum object
      */
-    findLastBeat :function(clock, skip) {
+    findLastBeat :function(clock, skip, confidence) {
         
         var beat = null;
         
         var beats = this.data.beats;
-				
-		var confidenceThreshold = this.minBeatConfidence;
+    				
+		var confidenceThreshold = confidence || this.minBeatConfidence;
 		
         var i;
         for(i=0; i<beats.length;i++) {
@@ -82,11 +102,46 @@ Analysis.prototype = {
             if(t.start > clock) {
                 break;
             }           
+			
             beat = t;                       
         }
                 
         return beat;
     },
+
+
+    /**
+     * Generic AudioQuantum array search
+     * 
+     * @param {Object} array
+     * @param {Object} name
+     * @param {Object} clock
+     * @param {Object} skip
+     * @param {Object} confidence
+     */
+    findLast: function(array, clock, skip, confidenceThreshold) {
+        
+        var item = null;
+                                    
+        var i;
+        for(i=0; i<array.length;i++) {
+        
+		    var t = array[i];         
+    
+            if(t.confidence < confidenceThreshold) {
+                continue;
+            }           
+                          
+            if(t.start > clock) {
+                break;
+            }           
+            
+            item = t;                       
+        }
+                
+        return item;
+    },
+       
         
     
     /**

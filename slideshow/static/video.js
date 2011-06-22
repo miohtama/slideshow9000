@@ -46,11 +46,22 @@ CanvasVideoHelper.prototype = {
 	 * @param {Object} clock
 	 */
 	fetchFrame : function(clock) {
+		
 		try {
-            this.video.currentTime = clock / 1000;
+        
+		    // work with seconds here
+		    clock = clock / 1000;
+		    
+			// Do our custom looping
+			while(clock > this.video.duration && this.video.duration > 1) {
+				clock -= this.video.duration;
+			}
+		
+		    this.video.currentTime = clock;
+		
 			this.canvasContext.drawImage(this.video, 0, 0, this.width, this.height);
 		} catch(e) {
-			// Chrome bug?
+			// Chrome bug? can't set currentTime
 			console.log(e);
 		}
 	},
