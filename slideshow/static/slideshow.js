@@ -164,7 +164,7 @@ slideshow = {
         var self = this;
 
         $("#preview-button").click(function() {                             
-            self.preparePreview();            
+            self.prepareCanvasAssets();            
 			self.updateButtons();
         });
 		
@@ -194,7 +194,7 @@ slideshow = {
 	/**
 	 * Make sure we create all heavy objects before hand to get smooth animation
 	 */
-	preparePreview : function() {
+	prepareCanvasAssets : function(muted) {
 		
 		$("#preview-note").slideDown();
 
@@ -206,7 +206,7 @@ slideshow = {
 		
 		function done() {
             $("#preview-note").slideUp();
-			self.loop();
+			self.loop(muted);
 		}
 		
 		this.renderer.prepare(done);
@@ -219,7 +219,7 @@ slideshow = {
 	/**
 	 * Enter the main rendering loop
 	 */
-    loop : function() {
+    loop : function(muted) {
        console.log("-----------------------")    	
 	   console.log("loop start")	
        console.log("-----------------------")       
@@ -229,7 +229,11 @@ slideshow = {
 		return;
 	   }
 	   
-	   this.player.start();
+	   if(muted == true) {
+	       // Recording mode
+	   } else {	   
+	       this.player.start();
+	   }
 	   
 	   // Reset clock
 	   this.clock = 0;
@@ -263,10 +267,16 @@ slideshow = {
         this.clock = time;
     },
     
+    /**
+     * Animate all objects and render next frame.
+     */
     tick : function() {     
     
-      // Stopped
+      console.log("tick()");
+    
+      // Stopped      
       if(!this.play) {
+        console.log("Stopped");
         return;
       }
     
@@ -355,7 +365,7 @@ slideshow = {
 	 * 
 	 * @param {Object} uri
 	 */
-	loadSong : function(uri) {
+	loadSong : function(uri, callback) {
 				
 		console.log("Loading song:" + uri);
 		
@@ -384,6 +394,10 @@ slideshow = {
 			
 			this.songLoaded = true;
 			this.updateButtons();
+			
+			if(callback) {
+			    callback();
+			}
 		}
 		
 		function gotSong() {
@@ -399,7 +413,10 @@ slideshow = {
 		
 		var dataURI = uri.replace(".mp3", ".json");
 		
-		this.player.loadSong(uri, $.proxy(gotSong, this))
+		if(this.player) {
+		  // Recording mode does not have audio player
+		  this.player.loadSong(uri, $.proxy(gotSong, this))
+		}
 		
 		$.getJSON(dataURI, $.proxy(gotData, this));
 	}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal">
+<head>
+  <title>The Little HTML5 Slideshow Recorder</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+  <meta name="keywords" content="python web application" />
+  <meta name="description" content="pyramid web application" />
+
+  <link rel="stylesheet" href="${request.static_url('slideshow:static/ui-lightness/jquery-ui.css')}" />
+  <link rel="stylesheet" href="${request.static_url('slideshow:static/styles.css')}" type="text/css" media="screen" charset="utf-8" />
+  <link rel="stylesheet" href="${request.static_url('slideshow:static/ui-lightness/jquery-ui.css')}" type="text/css" media="screen" charset="utf-8" />
+
+
+  <link href='http://fonts.googleapis.com/css?family=Kranky&v1' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Indie+Flower&v1' rel='stylesheet' type='text/css'>
+  <script type="text/javascript" src="${request.static_url('slideshow:static/js/jquery-bundle.js')}"></script>
+  <script type="text/javascript" src="${request.static_url('slideshow:static/js/es5shim.js')}"></script>
+  <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+  <script src="${request.static_url('slideshow:static/js/soundmanager2-jsmin.js')}"></script>
+  
+  <script type="text/javascript" src="${request.static_url('slideshow:static/js/jquery.easing.1.3.js')}"></script>
+  <script type="text/javascript" src="${request.static_url('slideshow:static/video.js')}"></script>
+  <script type="text/javascript" src="${request.static_url('slideshow:static/renderer.js')}"></script>
+  <script type="text/javascript" src="${request.static_url('slideshow:static/analysis.js')}"></script>  
+  <script type="text/javascript" src="${request.static_url('slideshow:static/slideshow.js')}"></script>
+  <script type="text/javascript" src="${request.static_url('slideshow:static/recorder.js')}"></script>
+
+
+</head>
+<body>
+  <div id="wrap">
+  		
+    <h1>Recording video</h1>
+
+	<!-- Hidden video control feeding frames to canvas -->
+	<video id="background-video" style="display: none" loop>
+        <source src=static/videos/ambient.webm type=video/webm>    
+        <source src=static/videos/ambient.mp4 type=video/mp4>
+        <source src=static/videos/ambient.ogv type=video/ogg>
+	</video>
+    
+	<div id="slideshow-wrapper" class="charcoal">
+		<canvas id=slideshow width=710 height=417>	       
+	    </canvas>
+	</div>
+
+    <ul id="image-list">
+        <!-- <li><img src="/static/images/coffee.jpg"/></li><li><img src="/static/images/kakku.png" /></li> -->
+    </ul>
+
+	
+	
+</body>
+</html>

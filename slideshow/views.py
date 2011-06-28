@@ -58,6 +58,13 @@ def my_view(request):
     return {'root':root, 'project':'slideshow', 'songs' : songs}
 
 
+def recorder(request):
+    """
+    Selenium video recorder
+    """        
+    return {'project':'slideshow', 'songs' : songs}
+
+
 def set_upload_dir(dirname):
     global permanent_store_dir
     permanent_store_dir = dirname

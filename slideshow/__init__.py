@@ -17,6 +17,9 @@ def main(global_config, **settings):
     config.add_route('upload', '/upload', view='slideshow.views.upload',
                      view_renderer='json')
 
+    config.add_route('recorder', '/recorder', view='slideshow.views.recorder',
+                     view_renderer='templates/recorder.pt')
+    
     config.add_route('get_file', '/files/{filename}', view='slideshow.views.get_file')
 
     set_upload_dir(config.get_settings()['upload_dir'])

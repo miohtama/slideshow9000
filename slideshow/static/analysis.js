@@ -27,7 +27,7 @@ function Analysis(json) {
 		this.minBeatConfidence = 0;
 	} else {
 	   // Use beats by arbitary value
-	   this.minBeatConfidence = 0.5;
+	   this.m = 0.5;
 	}
 	
 	console.log("Using default beat confidence threshold of " + this.minBeatConfidence);
