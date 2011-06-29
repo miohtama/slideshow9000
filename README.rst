@@ -58,6 +58,32 @@ Then install Echo Nest remix API:
     sudo python setup.py install
     sudo ln -s `which ffmpeg` /usr/local/bin/en-ffmpeg
 
+Install Selenium
+--------------------------------------
+
+Selenium is used for frame recording by remote controlling a Firefox browser which connects to localhost running Pyramid.
+
+::
+
+    source pyramid/bin/activate    
+    wget http://selenium.googlecode.com/files/selenium-server-standalone-2.0rc2.jar
+    easy_install selenium
+    
+    
+Recording a video
+-----------------------------------------
+
+Run Selenium
+
+::
+
+    source pyramid/bin/activate
+    python slideshow/recoder.py # Will start Firefox + Pyramid 
+        
+
+    
+    
+
 Music
 -------
 

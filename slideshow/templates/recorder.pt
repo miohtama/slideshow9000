@@ -48,7 +48,8 @@
         <!-- <li><img src="/static/images/coffee.jpg"/></li><li><img src="/static/images/kakku.png" /></li> -->
     </ul>
 
-	
-	
+    <button name="tick">Tick</button>	
+	<button name="grab">Grab</button>
+
 </body>
 </html>

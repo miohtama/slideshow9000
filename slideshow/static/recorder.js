@@ -21,7 +21,7 @@ Recorder.prototype = {
         
         var self = this;        
         function nextTick() {
-            self.nextTick();            
+            //self.nextTick();            
         }
         
         // No timed evenst, honour recording clock 
@@ -73,11 +73,29 @@ Recorder.prototype = {
     },
     
     /**
+     * Can be called internally or via selenium
+     */
+    isReady : function() {
+       if(this.imagesLoaded && this.musicDataLoaded) {
+           return true;
+       }
+        
+       return false;
+    },
+    
+    /**
+     * Has the animation been recorded
+     */
+    isDone : function() {
+        return false;
+    },
+    
+    /**
      * Have we preloaded media assets needed for recording
      */
     checkReady : function() {
        console.log("checkReady: Images loaded:" + this.imagesLoaded + " music data:" +  this.musicDataLoaded);
-       if(this.imagesLoaded && this.musicDataLoaded) {
+       if(this.isReady()) {
            this.start();
        }
     },
@@ -96,45 +114,74 @@ Recorder.prototype = {
      * Do tick-by-hand
      */
     nextTick : function() {
-        console.log("Manual tick");
-        
-        function timeout() {
-            slideshow.onClock(0.1);
-            slideshow.tick();
-        }  
-        
-        setTimeout(timeout, 100);
-        
+        console.log("Manual tick:" + slideshow.clock + " " + slideshow.play);               
+        slideshow.tick();        
+        //setTimeout(timeout, 100);        
     },
 
     /**
      * Prepare manual event loop
      */
     start : function() {
+        
+        if(slideshow.analysis == null) {
+            throw "still needs beat data";
+        }
                      
-        slideshow.onClock(0);
-                
+        slideshow.onClock(0);                       
         slideshow.prepareCanvasAssets(true);
                 
     },
 
     
     setClock : function(clock) {
-        
+        slideshow.onClock(clock);
     },
     
     grabFrame : function() {
+        var canvas = slideshow.canvas;
         
-    }
+        var ctx = slideshow.ctx;
+        var imageData = ctx.getImageData(0, 0, slideshow.width, slideshow.height);
+        var data = canvas.toDataURL();
+        //var dataURL = canvas.toDataURL("image/png");
+        console.log("Grabbed frame, encoded PNG base64 length" + data.length);
+        //console.log(data);                
+        return data;               
+    },
+    
+    prepareFrame : function(clock) {
+        this.setClock(clock);
+        this.nextTick();        
+    },
+    
+    
+    
     
 }
+
 
 $(document).ready(function() {
     
     var recorder = new Recorder();
     
+    // Expose to Selenium
+    window.recorder = recorder;    
+    
     recorder.init();
     recorder.loadSong("static/music/celine.mp3");
     recorder.loadImages(["static/images/coffee.jpg", "static/images/kakku.png"]);
-                 
+
+    $("button[name=tick]").click(function() {
+        var clock = slideshow.clock;
+        clock += 250; 
+        recorder.prepareFrame(clock);
+    });
+
+    $("button[name=grab]").click(function() {
+        var data = recorder.grabFrame();
+    });
+    
+    
 });
+ 

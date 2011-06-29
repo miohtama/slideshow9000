@@ -196,6 +196,12 @@ slideshow = {
 	 */
 	prepareCanvasAssets : function(muted) {
 		
+		console.log("prepareCanvasAssets()");
+		
+		if(this.analysis == null) {
+		    throw "Need beat data";
+		}
+		
 		$("#preview-note").slideDown();
 
         this.renderer = new Renderer();     
@@ -384,9 +390,12 @@ slideshow = {
 		var song = false;
 		var dataLoaded = false;
 		
+		var self = this;
+		
 		function finished() {
 			
 			console.log("Song load process " + song + " " + dataLoaded);
+			console.log("Analysis:" + this.analysis);
 			
 			if(song && dataLoaded) {
 		      $("#load-song-note").slideUp();		
@@ -400,15 +409,17 @@ slideshow = {
 			}
 		}
 		
+		var cb = $.proxy(finished, this); 
+		
 		function gotSong() {
 			song = true;
-			$.proxy(finished, this)();
+			cb();
 		}
 		
-		function gotData(data) {
+		function gotData(data) {	    
 		  this.analysis = new Analysis(data);
 		  dataLoaded = true;
-		  $.proxy(finished, this)();	
+		  cb();	
 		}
 		
 		var dataURI = uri.replace(".mp3", ".json");
@@ -416,6 +427,9 @@ slideshow = {
 		if(this.player) {
 		  // Recording mode does not have audio player
 		  this.player.loadSong(uri, $.proxy(gotSong, this))
+		} else {
+		    // Mock proper MP3 load
+		    song = true;
 		}
 		
 		$.getJSON(dataURI, $.proxy(gotData, this));
