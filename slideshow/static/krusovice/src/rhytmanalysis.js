@@ -12,8 +12,8 @@ var krusovice = krusovice || {};
 krusovice.RhytmAnalysis = function(json) {
 
 	this.data = json;
-
-    // Search max confidence in beats
+	    
+	// Search max confidence in beats
     var maxBeatConfidence = 0;	
 	
 	this.data.beats.forEach(function(b) {

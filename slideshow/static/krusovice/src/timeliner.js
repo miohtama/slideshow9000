@@ -12,11 +12,11 @@ krusovice.Timeliner = function(input) {
 	this.rhytmData = input.rhytmData;
 
 	if(!this.showElements) {
-		throw new Exception("you must give list of elements to show");
+		throw new TypeError("you must give list of elements to show");
 	}
 	
 	if(!jQuery.isArray(this.showElements)) {
-		throw new Exception("Array plz");
+		throw new TypeError("Array plz");
 	}
  	
 	this.transitionInEffects = input.transitionInEffects; // list of available transition effect ids
@@ -65,8 +65,17 @@ krusovice.Timeliner.defaultSettings = {
 
 krusovice.Timeliner.prototype = {
 		
+	/**
+	 * Create rhytm analysis interface for laoded rhytm data.
+	 * 
+	 * Optionally we can use null data and no beats.
+	 */
 	createMusicAnalysis : function() {
-		return krusovice.RhytmAnalysis(this.rhytmData);		
+		if(this.rhytmData) {
+			return krusovice.RhytmAnalysis(this.rhytmData);
+		} else {
+			return null;
+		}
 	},
 	
 	/**
@@ -76,7 +85,7 @@ krusovice.Timeliner.prototype = {
 	 */
 	createPlan : function() {
 				
-		this.analytics = this.createMusicAnalysis(this.rhytmData);
+		this.analysis = this.createMusicAnalysis(this.rhytmData);
 		
 		var plan = [];
 		
@@ -88,37 +97,51 @@ krusovice.Timeliner.prototype = {
 				
 		var musicStartTime = this.settings.musicStartTime;
 					
-		for(var i=0; i<this.input.showElements.length; i++) {
+		for(var i=0; i<this.showElements.length; i++) {
 			
 			var elem = this.showElements[i];
 			
+			// Construct show element 
 			var out = {};
+			
+			// Populate it with default values from input
 			this.copyAttrs(out, elem, ["id", "type", "text", "label"]);
 			
+			// Place element on the timeine based on our current clock
 			this.timeElement(out, elem, clock)		
 								
-			this.createEffect("in", out.transitionIn, settings.transitionIn.type);					
-			this.createEffect("out", out.transitionOut, settings.transitionOut.type);								
-			this.createEffect("screen", out.onScreen, settings.onScreen.type);			
-									
+			// Setup element effects
+			out.transitionIn = this.createEffect("in", this.settings.transitionIn.type);					
+			out.transitionOut = this.createEffect("out", this.settings.transitionOut.type);								
+			out.onScreen = this.createEffect("screen", this.settings.onScreen.type);			
+								
+			// Adjance clock to the start of the next show item based
+			// on the duration of this show item
 			clock += out.transitionIn.duration + 
 			         out.transitionOut.duration + 
 			         out.onScreen.duration + transitionOut.clockSkip;
+		
+			plan.push(out);
 		}		
 		
 		return plan;
 	},
 	
-	timeElement : function(target, source, clock) {
+	/**
+	 * @param out Show element
+	 */
+	timeElement : function(out, source, clock) {
 				
 		var transitionIn = this.settings.transitionIn; 
 		var transitionOut = this.settings.transitionOut;
-		var onScreen = this.settings.onScreen;		
+		var onScreen = this.settings.onScreen;
+		
+		var musicStartTime = this.settings.musicStartTime;
 		
 		// start on screen effect on beat
 		// stop on screen effect on beat
-		var hitsScreen = this.analysis.findBeat(clock + musicStartTime + transitionIn.duration) - musicStartTime;			
-		var hitsOut = this.analysis.findBeat(hitsScreen + musicStartTime + onScreen.duration) - musicStartTime;					
+		var hitsScreen = this.findNextBeat(clock + musicStartTime + transitionIn.duration) - musicStartTime;			
+		var hitsOut = this.findNextBeat(hitsScreen + musicStartTime + onScreen.duration) - musicStartTime;					
 		out.wakeUpTime = hitsScreen - transitionIn;
 		
 		out.transitionIn = {
@@ -134,23 +157,31 @@ krusovice.Timeliner.prototype = {
 		};		
 	},
 	
+	/**
+	 * Shallow copy named attributes of an object
+	 */
 	copyAttrs : function(target, source, attr) {
-		attrs.forEach(function(name) {
-			target[name] = source[name];
+		$.each(source, function(name, value) {
+			target[name] = value;
 		});
 	},
 	
-	createEffects : function(animation, effect, type) {
-				
+	/**
+	 * 
+	 */
+	createEffect : function(animation, type) {
+		
+		var effect = {};
+		
 		effect.type = type;
 		
 		if(type == "random") {
 			if(animation == "screen") {
-				effect.type = this.pickRandom(this.onScreenEffects);
+				effect.type = krusovice.pickRandomElement(this.onScreenEffects);
 			} else if(animation == "out") {
-				effect.type = this.pickRandom(this.transitionOutEffects);
+				effect.type = krusovice.pickRandomElement(this.transitionOutEffects);
 			} else {
-				effect.type = this.pickRandom(this.transitionInEffects);
+				effect.type = krusovice.pickRandomElement(this.transitionInEffects);
 			}
 		}
 		
@@ -165,9 +196,25 @@ krusovice.Timeliner.prototype = {
 		effect.positions = null;
 		effect.rotations = null;
 		
+		return effect;
 	},
 		
+	/**
+	 * 
+	 * 
+	 * @param clock Clock in song time
+	 * 
+	 * @return Next beat in song time or clock if no data avail
+	 */
 	findNextBeat : function(clock, window) {
+		
+		if(!this.analysis) {
+			return null;
+		}
+		
+		if(!window) {
+			window = 1500;
+		}
 		
 		var beat = this.analysis.findNextBeat(clock);
 		
@@ -176,8 +223,9 @@ krusovice.Timeliner.prototype = {
 		}
 		
 		return beat;
-	}	
+	},	
 	
+
 	
 }
 

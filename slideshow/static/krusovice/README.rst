@@ -6,9 +6,25 @@ Krusovice is a high quality HTML5 rhytmic photo show creator
 which you can integrate to your website.
 
 
-
 Data formats
 --------------
+
+Animation types
+==================
+
+Animation: one of 
+
+* *in*: appearing show element
+
+* *out*: fading out show element
+
+* *screen*: currently primary element being shown
+
+Timeline input element
+=============================
+
+Describe photo or text we want to have placed
+on a timeline.
 
 Input::
 
@@ -106,10 +122,48 @@ Plan Data (internal to Plan object):
 Unit tests
 ------------
 
-JS-test-driver
+JS-test-driver command line
+=============================
 
-* 
+* http://code.google.com/p/js-test-driver/wiki/GettingStarted
+
+::
+
+        wget http://js-test-driver.googlecode.com/files/JsTestDriver-1.3.2.jar
+        java -jar JsTestDriver-1.3.2.jar --port 9876
+        
+Then visit
+
+        http://localhost:9876
+        
+Leave the browser running. Put the job JsTestDriver on background.
+
+Now trigger a test run::
+
+        java -jar JsTestDriver-1.3.2.jar --tests all
+                         
 
 Eclipse plug-in
+=============================
+
+Intall plug-in
 
 * http://code.google.com/p/js-test-driver/wiki/UsingTheEclipsePlugin
+
+.. warning
+
+        Only version 1.1.1.e or later works. Don't pick
+        version 1.1.1.c.
+        
+* http://code.google.com/p/js-test-driver/issues/detail?id=214       
+
+*Run Configurations...* -> for JSTest. Select a .conf file from the project root.
+Don't run it yet, just save.
+
+Open view *Javascript* > *JsTestDriver*.
+
+Click *Play* to start test runner server.
+Now JsTsetDriver view shows "capture" URL - go there with your browser(s).
+
+The test machinery has now been set-up.
+Now you can run tests, or leave on checkbox in the run configuration *Run on Save*.
