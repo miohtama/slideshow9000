@@ -33,6 +33,19 @@ TimelinerTest.prototype.testBasicNoMusic = function() {
 	assertEquals(plan.length, 2);
 };
 
+
+/**
+ * Test construction of very simple timeline with music
+ */
+TimelinerTest.prototype.testBasicMusic = function() {
+
+	assertObject("Could not load song data", sampleSongData);
+		
+	var timeliner = krusovice.Timeliner.createSimpleTimeliner(simpleElements, sampleSongData);
+	var plan = timeliner.createPlan();
+	assertEquals(plan.length, 2);
+};
+
 /**
  * We cannot construct slideshow without valid input elements
  */

@@ -167,3 +167,7 @@ Now JsTsetDriver view shows "capture" URL - go there with your browser(s).
 
 The test machinery has now been set-up.
 Now you can run tests, or leave on checkbox in the run configuration *Run on Save*.
+
+More about asserts
+
+* http://code.google.com/p/js-test-driver/source/browse/trunk/JsTestDriver/src/com/google/jstestdriver/javascript/Asserts.js
