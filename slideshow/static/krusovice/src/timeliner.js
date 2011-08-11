@@ -1,27 +1,69 @@
-var krusovice = krusovice || {};
+'use strict';
+
+var krusovice = krusovice || {};
 
 /**
  * Create timelines based on sample input
  */
-krusovice.Planner = function(input) {
+krusovice.Timeliner = function(input) {
 	
 	this.showElements = input.showElements;
 	this.settings = input.settings;
 	this.rhytmData = input.rhytmData;
 
+	if(!this.showElements) {
+		throw new Exception("you must give list of elements to show");
+	}
 	
+	if(!jQuery.isArray(this.showElements)) {
+		throw new Exception("Array plz");
+	}
+ 	
 	this.transitionInEffects = input.transitionInEffects; // list of available transition effect ids
 	this.transitionOutEffects = input.transitionOutEffects; // list of available transition effect ids
 	this.onScreenEffects = input.onScreenEffects;	
 	
 }
 
+/**
+ * Shortcut to create a presentation easily.
+ */
+krusovice.Timeliner.createSimpleTimeliner = function(elements, rhytmData) {
+	var input = {
+			showElements : elements,
+			rhytmData : rhytmData,
+			settings : krusovice.Timeliner.defaultSettings,
+			transitionInEffects : ["fadein"],
+			transitionOutEffects : ["fadeout"],
+			onScreenEffects: ["slightMove"]
+	};
+	
+	return new krusovice.Timeliner(input);
+};
 
-krusovice.Planner.defaultSettings = {
+krusovice.Timeliner.defaultSettings = {
+				
+		// Time in seconds where song starts playing
+		musicStartTime : 0,
 		
+	    transitionIn : {
+		    type : "random",
+		    duration : 2.0,                                                
+		},
+		
+		transitionOut : {
+		    type : "random",
+		    duration : 2.0,          
+		    clockSkip : 0.0 // How many seconds we adjust the next object coming to the screen
+		},   
+		
+		onScreen : {
+		    type : "slightMove",
+		    duration : 2.0,
+		}                          
 }
 
-krusovice.Planner.prototype = {
+krusovice.Timeliner.prototype = {
 		
 	createMusicAnalysis : function() {
 		return krusovice.RhytmAnalysis(this.rhytmData);		
@@ -32,7 +74,7 @@ krusovice.Planner.prototype = {
 	 * 
 	 * @return
 	 */
-	function createPlan() {
+	createPlan : function() {
 				
 		this.analytics = this.createMusicAnalysis(this.rhytmData);
 		
@@ -43,8 +85,7 @@ krusovice.Planner.prototype = {
 		var transitionIn = this.settings.transitionIn; 
 		var transitionOut = this.settings.transitionOut;
 		var onScreen = this.settings.onScreen;
-		
-		
+				
 		var musicStartTime = this.settings.musicStartTime;
 					
 		for(var i=0; i<this.input.showElements.length; i++) {
@@ -64,6 +105,8 @@ krusovice.Planner.prototype = {
 			         out.transitionOut.duration + 
 			         out.onScreen.duration + transitionOut.clockSkip;
 		}		
+		
+		return plan;
 	},
 	
 	timeElement : function(target, source, clock) {
@@ -87,7 +130,7 @@ krusovice.Planner.prototype = {
 		};		
 		
 		out.transitionOut = {
-				transitionOut.duration					
+				duration : transitionOut.duration					
 		};		
 	},
 	
@@ -95,7 +138,7 @@ krusovice.Planner.prototype = {
 		attrs.forEach(function(name) {
 			target[name] = source[name];
 		});
-	}
+	},
 	
 	createEffects : function(animation, effect, type) {
 				

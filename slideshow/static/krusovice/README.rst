@@ -1,3 +1,15 @@
+
+Introduction
+-------------
+
+Krusovice is a high quality HTML5 rhytmic photo show creator
+which you can integrate to your website.
+
+
+
+Data formats
+--------------
+
 Input::
 
         {
@@ -9,7 +21,7 @@ Input::
                 onScreenEffectIds,                        
         }
 
-Input elements:
+Show elements:
 
         {
                 id,
@@ -74,7 +86,7 @@ Effects:
                                                 
         }
 
-Show objects::
+Generated timeline objects::
 
         {
                 id,
@@ -91,4 +103,13 @@ Show objects::
 Plan Data (internal to Plan object):
         [ show object 1, show object 2, .... ]
         
-        
+Unit tests
+------------
+
+JS-test-driver
+
+* 
+
+Eclipse plug-in
+
+* http://code.google.com/p/js-test-driver/wiki/UsingTheEclipsePlugin

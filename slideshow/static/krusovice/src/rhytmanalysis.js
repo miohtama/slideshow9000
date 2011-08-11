@@ -5,8 +5,9 @@
  * (start, duration).
  * 
  */
+"use string";
 
-var krusovice = krusovice || {};
+var krusovice = krusovice || {};
 
 krusovice.RhytmAnalysis = function(json) {
 
