@@ -41,3 +41,40 @@ TimelinerTest.prototype.testNoInput = function() {
 	// you must give list of elements to show
 	assertException("Must fail - bad input", test);
 }; 
+
+
+/**
+ * Check that item has been assigned a wake up time correctly
+ */
+TimelinerTest.prototype.testHasWakeUpTime = function() {
+	
+	var timeliner = krusovice.Timeliner.createSimpleTimeliner(simpleElements, null);
+	var plan = timeliner.createPlan();
+
+	var elem = plan[0];
+	
+	assertTrue(elem.wakeUpTime >= 0);
+	assertTrue(elem.wakeUpTime < 5);
+	
+}; 
+
+/**
+ * Check that item has been assigned a wake up time correctly
+ */
+TimelinerTest.prototype.testHasAnimationTypes = function() {
+	
+	var timeliner = krusovice.Timeliner.createSimpleTimeliner(simpleElements, null);
+	var plan = timeliner.createPlan();
+
+	plan.forEach(function(e) {
+		assertString(e.transitionIn.type);
+		assertString(e.transitionOut.type);
+		assertString(e.onScreen.type);
+
+		assertString(e.transitionIn.easing);
+		assertString(e.transitionOut.easing);
+		assertString(e.onScreen.easing);
+		
+	});
+	
+}; 

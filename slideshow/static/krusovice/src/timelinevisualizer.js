@@ -26,8 +26,11 @@ krusovice.TimelineVisualizer = function(plan, rhytmData) {
 	// One visualization line height in pixels
 	this.lineHeight = 80;
 	
-	// No of renderer beats (for testing purposes)
+	// No of rendered  beats (for testing purposes)
 	this.renderedBeats = 0;
+	
+	// No of rendered show elements (for testing purposes)
+	this.renderedElements = 0;
 }
 
 krusovice.TimelineVisualizer.prototype = {
@@ -65,6 +68,9 @@ krusovice.TimelineVisualizer.prototype = {
 			return [canvas, context];
 		},
 		
+		/**
+		 * Show time hints for the timelint
+		 */
 		createClockLine : function () {
 					
 			var line = this.createLabelLine ();
@@ -81,6 +87,9 @@ krusovice.TimelineVisualizer.prototype = {
 		},
 		
 		
+		/**
+		 * Show beat data on timeline
+		 */
 		createBeatLine : function() {
 
 			console.log("Rendering beat line");
@@ -118,6 +127,8 @@ krusovice.TimelineVisualizer.prototype = {
 					 
 					 var beatsHit = 0;
 					 
+					 // Note: beat data clocks are in milliseconds
+					 
 					 // Wind beat cursor to the start of current clock span
 					 while(currentBeat < beats.length && beats[currentBeat].start/1000 < currentClock) {
 						 currentBeat++;
@@ -151,6 +162,55 @@ krusovice.TimelineVisualizer.prototype = {
 		},
 		
 		/**
+		 * Create timeline which shows element ease in, on screen and ease out times
+		 */
+		createElementLine : function() {
+			
+			console.log("Rendering element line");
+			
+			var line = this.createDataLine();
+			
+			var canvas = line[0];
+			var context = line[1];
+			
+			var i;
+			
+			context.lineWidth = 1;
+			
+			for(i=0; i<this.plan.length; i++) {
+				var elem = this.plan[i];
+							
+				// Add 50% alpha
+				context.strokeStyle = krusovice.pickRandomColor() + "88";
+				
+				var startX = elem.wakeUpTime * this.secondsPerPixel;
+								
+				var totalDuration = elem.transitionIn.duration + elem.onScreen.duration + elem.transitionOut.duration;
+							
+				// span length in pixels
+				var length = totalDuration / this.secondsPerPixel;
+			
+				console.log("Rendering element:" + elem + " x:" + startX + " duration:" + totalDuration + " length:" + length);
+								
+				for(var l=0; l<length; l++) {
+					var clock = l*this.secondsPerPixel;
+					var ease = krusovice.calculateElementEase(elem, clock);
+					var x = startX + l;
+					var height = ease * this.lineHeight;
+					context.beginPath();
+					context.moveTo(x + 0.5, this.lineHeight - height);
+					context.lineTo(x + 0.5, this.lineHeight);
+					context.stroke();
+				}
+				
+				this.renderedElements++;
+				
+			}
+			
+			return canvas;
+		},
+		
+		/**
 		 * Create position indicator line
 		 */
 		createPositionIndicator : function() {
@@ -172,9 +232,10 @@ krusovice.TimelineVisualizer.prototype = {
 			
 			var clock = this.createClockLine();
 			var beats = this.createBeatLine();
-			
+			var elements = this.createElementLine();
 			elem.append(clock);
 			elem.append(beats);
+			elem.append(elements);
 			
 			this.positionIndicator = this.createPositionIndicator();
 			elem.append(this.positionIndicator)

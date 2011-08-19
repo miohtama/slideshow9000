@@ -102,25 +102,41 @@ krusovice.Timeliner.prototype = {
 			
 			var elem = this.showElements[i];
 			
+			console.log("Element #" + i + " current clock:" + clock);
+			
 			// Construct show element 
 			var out = {};
 			
 			// Populate it with default values from input
 			this.copyAttrs(out, elem, ["id", "type", "text", "label"]);
 			
+			if(!elem.duration) {
+				throw "Element duration missing";
+			}
+			
 			// Place element on the timeine based on our current clock
-			this.timeElement(out, elem, clock)		
+			this.timeElement(out, elem, clock, elem.duration);		
 								
 			// Setup element effects
-			out.transitionIn = this.createEffect("in", this.settings.transitionIn.type);					
-			out.transitionOut = this.createEffect("out", this.settings.transitionOut.type);								
-			out.onScreen = this.createEffect("screen", this.settings.onScreen.type);			
+			this.createAnimationSettings(out.transitionIn, "in", this.settings.transitionIn.type);					
+			this.createAnimationSettings(out.transitionOut, "out", this.settings.transitionOut.type);								
+			this.createAnimationSettings(out.onScreen, "screen", this.settings.onScreen.type);			
 								
 			// Adjance clock to the start of the next show item based
+			
+			console.log("Got out");
+			console.log(out);
+			
 			// on the duration of this show item
 			clock += out.transitionIn.duration + 
 			         out.transitionOut.duration + 
 			         out.onScreen.duration + transitionOut.clockSkip;
+			
+			if(!clock) {
+				console.error("Latest input element");
+				console.error(elem)
+				throw "Bad presentation input element";
+			}
 		
 			plan.push(out);
 		}		
@@ -131,7 +147,7 @@ krusovice.Timeliner.prototype = {
 	/**
 	 * @param out Show element
 	 */
-	timeElement : function(out, source, clock) {
+	timeElement : function(out, source, clock, onScreenDuration) {
 				
 		var transitionIn = this.settings.transitionIn; 
 		var transitionOut = this.settings.transitionOut;
@@ -139,18 +155,30 @@ krusovice.Timeliner.prototype = {
 		
 		var musicStartTime = this.settings.musicStartTime;
 		
-		// start on screen effect on beat
-		// stop on screen effect on beat
+		console.log("Input data: " + clock + " start time:" + musicStartTime +  " in duration:" + transitionIn.duration + " on screen:" + onScreen.duration);
+		
+		// on screen effect starts time
 		var hitsScreen = this.findNextBeat(clock + musicStartTime + transitionIn.duration) - musicStartTime;			
-		var hitsOut = this.findNextBeat(hitsScreen + musicStartTime + onScreen.duration) - musicStartTime;					
-		out.wakeUpTime = hitsScreen - transitionIn;
+
+		// on screen effect stops time
+		var hitsOut = this.findNextBeat(hitsScreen + musicStartTime + onScreenDuration) - musicStartTime;	
+		
+		if(!hitsScreen || hitsScreen < 0) {
+			throw "Failed to calculate hits to screen time";
+		}
+
+		if(!hitsOut ||hitsOut <  0) {
+			throw "Failed to calculate leaves the screen time";
+		}
+		
+		out.wakeUpTime = hitsScreen - transitionIn.duration;
 		
 		out.transitionIn = {
 				duration : hitsScreen - clock					
 		};
 		
 		out.onScreen = {
-				duration : hitsScreen - hitsOut
+				duration : hitsOut - hitsScreen
 		};		
 		
 		out.transitionOut = {
@@ -168,11 +196,9 @@ krusovice.Timeliner.prototype = {
 	},
 	
 	/**
-	 * 
+	 * Create one of animation blocks in the outgoing presentation data.
 	 */
-	createEffect : function(animation, type) {
-		
-		var effect = {};
+	createAnimationSettings : function(effect, animation, type, duration) {
 		
 		effect.type = type;
 		
@@ -184,6 +210,10 @@ krusovice.Timeliner.prototype = {
 			} else {
 				effect.type = krusovice.pickRandomElement(this.transitionInEffects);
 			}
+		}
+		
+		if(!effect.type) {
+			throw "Effect type pick failed";		
 		}
 		
 		if(animation == "in") {
@@ -210,7 +240,7 @@ krusovice.Timeliner.prototype = {
 	findNextBeat : function(clock, window) {
 		
 		if(!this.analysis) {
-			return null;
+			return clock;
 		}
 		
 		if(!window) {
