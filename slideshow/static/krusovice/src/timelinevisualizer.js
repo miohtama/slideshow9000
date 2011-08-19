@@ -187,7 +187,63 @@ krusovice.TimelineVisualizer.prototype = {
 		/**
 		 * Set position indicating cursor to a
 		 */
-		setPositionIndicator : function(elem, time) {
+		setPositionIndicator : function(time, visible) {
 			
+			if(visible) {
+				this.positionIndicator.show();
+			} else {
+				this.positionIndicator.hide();				
+			}
+			
+			console.log("Position update:" + time);
+			
+			var x = time / this.secondsPerPixel;
+			
+			// Draw marker as styled div over the parent elem
+			this.positionIndicator.css({
+				position : "absolute",
+				left : x + "px",
+				top : this.elem.offset().top,
+				width : "1 px",
+				height : this.elem.height() + "px"
+			});
 		}
+		
 };
+
+/* Play song over timeline visualization to see if beats match song data */
+krusovice.TimelinePlayer = function(visualization, src) {
+	this.visualization = visualization;
+	
+	// http://dev.opera.com/articles/view/everything-you-need-to-know-about-html5-video-and-audio/
+	this.audio = document.createElement("audio");
+
+	this.audio.controls = true;
+	
+	$(this.audio).bind("load", function() {
+		console.log("Loaded:" + src);
+	});
+
+	$(this.audio).bind("Error", function() {
+		console.log("Error:" + src);
+	});
+	
+	this.audio.setAttribute('src', src);
+	
+	$(this.audio).bind("timeupdate", $.proxy(this.onTimeUpdate, this));
+	$(this.audio).bind("stop", $.proxy(this.stop, this));
+
+}
+
+krusovice.TimelinePlayer.prototype = {
+		
+		stop : function() {
+			this.visualization.setPositionIndicator(0, false);
+		},
+			
+		
+		onTimeUpdate : function() {
+			var ctime = this.audio.currentTime;
+			this.visualization.setPositionIndicator(ctime, true);
+		}
+}

@@ -42,7 +42,6 @@ TimelineVisualizerTest.prototype.testBasicMusic = function() {
 	var div = document.createElement("div");
 	
 	visualizer.render(div);
-	
-		
+			
 	assertTrue(visualizer.renderedBeats > 100);
 };

@@ -28,10 +28,16 @@
                                 }
                                 var timeliner = krusovice.Timeliner.createSimpleTimeliner(simpleElements, sampleSongData);
                                 var plan = timeliner.createPlan();                              
+                                
                                 var visualizer = new krusovice.TimelineVisualizer(plan, sampleSongData);                                
+                                visualizer.secondsPerPixel = 0.02;
+                                visualizer.lineLength = 2000;
                                 var div = document.getElementById("visualizer-rhytm");                               
-                                visualizer.render(div);                                 
-
+                                visualizer.render(div);          
+                                
+                                var player = new krusovice.TimelinePlayer(visualizer, "../testdata/sample-song.mp3");
+                                $("#player").append(player.audio);      
+                          
 			});
                 </script>		
        	</head>
@@ -43,6 +49,7 @@
 		</div>
 
                 <h1>Rhytm</h1>
+                <div id="player"></div>
                 <div id="visualizer-rhytm">
                         
                 </div>

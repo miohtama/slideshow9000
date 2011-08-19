@@ -3,7 +3,6 @@
  */
 
 .timeline-visualization {
-	overflow: scroll;
 }
 
  .timeline {
@@ -18,6 +17,13 @@
 	float: left;
  }
  
- .timeline .canvas {
+ .timeline  {
  	width: 100%;
  }
+
+/* Hide until playback starts */
+.timeline-visualization .position-indicator {
+        display: none;
+	border: 0;
+	background: black;	
+}
