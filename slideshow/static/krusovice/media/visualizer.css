@@ -1,0 +1,23 @@
+/**
+ * Timeline visualizer styles
+ */
+
+.timeline-visualization {
+	overflow: scroll;
+}
+
+ .timeline {
+ 	height: 40px;
+	border-top: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
+ }
+ 
+ .timeline .label {
+        position: absolute;
+	z-inde: 2;
+	float: left;
+ }
+ 
+ .timeline .canvas {
+ 	width: 100%;
+ }

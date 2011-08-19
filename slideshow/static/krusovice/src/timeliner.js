@@ -9,6 +9,7 @@ krusovice.Timeliner = function(input) {
 	
 	this.showElements = input.showElements;
 	this.settings = input.settings;
+	
 	this.rhytmData = input.rhytmData;
 
 	if(!this.showElements) {
