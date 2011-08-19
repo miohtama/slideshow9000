@@ -78,3 +78,26 @@ TimelinerTest.prototype.testHasAnimationTypes = function() {
 	});
 	
 }; 
+
+/**
+ * Check that item has been assigned a wake up time correctly
+ */
+TimelinerTest.prototype.testCalculateEase = function() {
+	
+	var timeliner = krusovice.Timeliner.createSimpleTimeliner(simpleElements, null);
+	var plan = timeliner.createPlan();
+	
+	plan[0].transitionIn.easing = "linear";
+	plan[0].transitionIn.duration = 1.0;
+
+	plan[0].onScreen.easing = "linear";
+	plan[0].onScreen.duration = 1.0;
+
+	
+	plan[0].transitionOut.easing = "linear";
+	plan[0].transitionOut.duration = 1.0;
+
+	// Assert midpoint in one second
+	var val = krusovice.calculateElementEase(plan[0], 0.5);
+	assertEquals(0.5, val);
+}; 

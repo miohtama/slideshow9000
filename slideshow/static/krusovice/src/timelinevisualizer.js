@@ -183,7 +183,7 @@ krusovice.TimelineVisualizer.prototype = {
 				// Add 50% alpha
 				context.strokeStyle = krusovice.pickRandomColor() + "88";
 				
-				var startX = elem.wakeUpTime * this.secondsPerPixel;
+				var startX = elem.wakeUpTime / this.secondsPerPixel;
 								
 				var totalDuration = elem.transitionIn.duration + elem.onScreen.duration + elem.transitionOut.duration;
 							
