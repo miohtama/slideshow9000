@@ -31,37 +31,37 @@ krusovice.Timeliner = function(input) {
  */
 krusovice.Timeliner.createSimpleTimeliner = function(elements, rhytmData) {
 	var input = {
-			showElements : elements,
-			rhytmData : rhytmData,
-			settings : krusovice.Timeliner.defaultSettings,
-			transitionInEffects : ["fadein"],
-			transitionOutEffects : ["fadeout"],
-			onScreenEffects: ["slightMove"]
+        	showElements : elements,
+        	rhytmData : rhytmData,
+        	settings : krusovice.Timeliner.defaultSettings,
+        	transitionInEffects : ["fadein"],
+        	transitionOutEffects : ["fadeout"],
+        	onScreenEffects: ["slightMove"]
 	};
 	
 	return new krusovice.Timeliner(input);
 };
 
 krusovice.Timeliner.defaultSettings = {
-				
-		// Time in seconds where song starts playing
-		musicStartTime : 0,
-		
-	    transitionIn : {
-		    type : "random",
-		    duration : 2.0,                                                
-		},
-		
-		transitionOut : {
-		    type : "random",
-		    duration : 2.0,          
-		    clockSkip : 0.0 // How many seconds we adjust the next object coming to the screen
-		},   
-		
-		onScreen : {
-		    type : "slightMove",
-		    duration : 2.0,
-		}                          
+        				
+    // Time in seconds where song starts playing
+    musicStartTime : 0,
+	
+    transitionIn : {
+	    type : "random",
+	    duration : 2.0,                                                
+	},
+	
+	transitionOut : {
+	    type : "random",
+	    duration : 2.0,          
+	    clockSkip : 0.0 // How many seconds we adjust the next object coming to the screen
+	},   
+	
+	onScreen : {
+	    type : "slightMove",
+	    duration : 2.0,
+	}                          
 }
 
 krusovice.Timeliner.prototype = {
@@ -118,9 +118,9 @@ krusovice.Timeliner.prototype = {
 			this.timeElement(out, elem, clock, elem.duration);		
 								
 			// Setup element effects
-			this.createAnimationSettings(out.transitionIn, "in", this.settings.transitionIn.type);					
-			this.createAnimationSettings(out.transitionOut, "out", this.settings.transitionOut.type);								
-			this.createAnimationSettings(out.onScreen, "screen", this.settings.onScreen.type);			
+			this.createAnimationSettings(out.transitionIn, "transitionin", this.settings.transitionIn.type);					
+			this.createAnimationSettings(out.transitionOut, "transitionout", this.settings.transitionOut.type);								
+			this.createAnimationSettings(out.onScreen, "onscreen", this.settings.onScreen.type);			
 								
 			// Adjance clock to the start of the next show item based
 			
@@ -205,7 +205,7 @@ krusovice.Timeliner.prototype = {
 		if(type == "random") {
 			if(animation == "screen") {
 				effect.type = krusovice.pickRandomElement(this.onScreenEffects);
-			} else if(animation == "out") {
+			} else if(animation == "transitionout") {
 				effect.type = krusovice.pickRandomElement(this.transitionOutEffects);
 			} else {
 				effect.type = krusovice.pickRandomElement(this.transitionInEffects);
@@ -216,12 +216,12 @@ krusovice.Timeliner.prototype = {
 			throw "Effect type pick failed";		
 		}
 		
-		if(animation == "in") {
+		if(animation == "transitionin") {
 			effect.easing = "easeInSine";
-		} else if(animation == "out") {
-			effect.easing = "swing";
+		} else if(animation == "transitionout") {
+			effect.easing = "-linear";
 		} else {
-			effect.easing = "easeOutExpo";
+			effect.easing = "linear";
 		}		
 		
 		effect.positions = null;

@@ -16,11 +16,18 @@
                 <script type="text/javascript">
                 	$(document).ready(function() {
 				
+				
+				function setupVisualizer(visualizer) {
+                                        visualizer.secondsPerPixel = 0.02;
+                                        visualizer.lineLength = 2000;				        
+				}
+				
 				// Visualization without music
 			        var timeliner = krusovice.Timeliner.createSimpleTimeliner(simpleElements, null);
 			        var plan = timeliner.createPlan();			        
 			        var visualizer = new krusovice.TimelineVisualizer(plan);			        
-			        var div = document.getElementById("visualizer-no-rhytm");			        
+			        var div = document.getElementById("visualizer-no-rhytm");	
+			        setupVisualizer(visualizer);		        
 			        visualizer.render(div);					
 
                                 // Visualization with music
@@ -31,9 +38,8 @@
                                 var plan = timeliner.createPlan();                              
                                 
                                 var visualizer = new krusovice.TimelineVisualizer(plan, sampleSongData);                                
-                                visualizer.secondsPerPixel = 0.02;
-                                visualizer.lineLength = 2000;
                                 var div = document.getElementById("visualizer-rhytm");                               
+                                setupVisualizer(visualizer);                                
                                 visualizer.render(div);          
                                 
                                 var player = new krusovice.TimelinePlayer(visualizer, "../testdata/sample-song.mp3");

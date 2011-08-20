@@ -181,7 +181,8 @@ krusovice.TimelineVisualizer.prototype = {
 				var elem = this.plan[i];
 							
 				// Add 50% alpha
-				context.strokeStyle = krusovice.pickRandomColor() + "88";
+				var acolor = krusovice.pickRandomColor(128);
+				context.strokeStyle = acolor;
 				
 				var startX = elem.wakeUpTime / this.secondsPerPixel;
 								
@@ -190,13 +191,39 @@ krusovice.TimelineVisualizer.prototype = {
 				// span length in pixels
 				var length = totalDuration / this.secondsPerPixel;
 			
-				console.log("Rendering element:" + elem + " x:" + startX + " duration:" + totalDuration + " length:" + length);
+				console.log("Rendering element:" + elem + " x:" + startX + " duration:" + totalDuration + " length:" + length + " color:" + acolor);
 								
 				for(var l=0; l<length; l++) {
 					var clock = l*this.secondsPerPixel;
-					var ease = krusovice.calculateElementEase(elem, clock);
+					
+					
+					var animation = krusovice.calculateElementEase(elem, clock);
+					var value;
+					
+					if(animation.animation == "onscreen") {
+					   value = 1;
+					}  else {
+					   value = animation.value;
+					}
+					
+					if(value > 1) {
+					        console.error("Elem:");
+					        console.error(elem);
+					        console.error("Clock:" + clock);
+                                                console.error("Animation:");
+					        console.error(animation);
+					        throw new "Bad easing calculation yield too high value > 1";
+					}
+										
 					var x = startX + l;
-					var height = ease * this.lineHeight;
+					var height = value * this.lineHeight;
+					
+					// console.log("Rendering " + animation.animation + " x:" + l + " value:" + value);
+					
+					if(height == undefined) {
+					        throw "Height calculation failed for an animation";
+					}
+					
 					context.beginPath();
 					context.moveTo(x + 0.5, this.lineHeight - height);
 					context.lineTo(x + 0.5, this.lineHeight);
