@@ -104,6 +104,14 @@ This will
     python slideshow/recoder.py /tmp/data.raw # Will start Firefox + Pyramid  and output frame data to this file
        
 
+Then you can encode this::
+
+    gst-launch-0.10 filesrc location=../work/mixsnap/foo.raw blocksize=918528 ! \
+        'video/x-raw-rgb,bpp=24,endianness=4321,depth=24,red_mask=16711680,green_mask=65280,blue_mask=255,width=736,height=416,framerate=30/1' !\
+         ffmpegcolorspace ! videorate ! x264enc profile=baseline ! mux. \
+         filesrc location=josh.ogg ! decodebin ! audiorate ! audioconvert ! faac ! mux. \
+         mp4mux name=mux ! filesink location=foo.mp4
+
 Music
 -------
 
