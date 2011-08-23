@@ -69,20 +69,40 @@ Selenium is used for frame recording by remote controlling a Firefox browser whi
     wget http://selenium.googlecode.com/files/selenium-server-standalone-2.0rc2.jar
     easy_install selenium
     
+Install PIL
+--------------
+
+::
+
+    source pyramid/bin/activate    
+    easy_install http://dist.repoze.org/PIL-1.1.6.tar.gz    
     
 Recording a video
 -----------------------------------------
 
-Run Selenium
+Run Selenium in a recording mode.
+
+This will 
+
+* Spawn Pyramid server on localhost:6543
+
+* Open a Selenium driven Firefox on /recorder on the server
+
+* Control the execution of the Javascript on the page, make yield each animation frame individually
+
+* Encode frames to base64 PNG data URIs
+
+* Feed frames from Firefox to Python process through Selenium (using strings)
+
+* Decode frames in Python
+
+* Save decoded frames as RGB raw data to a stream (/tmp/data.raw)
 
 ::
 
     source pyramid/bin/activate
-    python slideshow/recoder.py # Will start Firefox + Pyramid 
-        
-
-    
-    
+    python slideshow/recoder.py /tmp/data.raw # Will start Firefox + Pyramid  and output frame data to this file
+       
 
 Music
 -------

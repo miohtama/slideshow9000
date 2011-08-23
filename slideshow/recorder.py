@@ -1,16 +1,23 @@
 """
 
     Record a video using Selenium + <canvas> toDataURI
+    
 
 """
 
 import sys
 import subprocess
 import time
+import base64
+from cStringIO import StringIO
+
+from PIL import Image
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
+
+
 
 # The recording speed
 FRAMES_PER_SECOND = 30.0
@@ -20,6 +27,11 @@ webserv = subprocess.Popen(["paster", "serve", "development.ini"], stdout=sys.st
 
 # Selenium instance
 browser = None
+
+# Output FIFO handle used for saving
+stream = None
+
+written = 0
 
 def check_ready():
     """ 
@@ -60,7 +72,29 @@ def decode_data_uri(data_uri):
     """
     Return raw bytes payload of data_uri     
     """        
-    import pdb ; pdb.set_trace()
+    
+    global stream, written
+    
+    print "Got frame data:" + str(len(data_uri))
+    
+    print "Data URI header:" + data_uri[0:40]
+
+    # u'data:image/png;base64,iVBORw0KGgoA
+    header_len = data_uri.find(",")
+    payload = data_uri[header_len+1:]
+    
+    binary = base64.b64decode(payload)
+    
+    print "Binary id:" + binary[0:4]
+    io = StringIO(binary)
+    
+    img = Image.open(io)
+    
+    raw = img.tostring("raw", "RGB")
+    
+    stream.write(raw)
+    
+    written += len(raw)
     
 print "Winding up Firefox for recording. Press CTRL+C to abort"
 
@@ -71,6 +105,8 @@ try:
     browser.get("http://localhost:6543/recorder") # Load page
     assert "Slideshow Recorder" in browser.title
     
+    # Opening FIFO for writing
+    stream = open(sys.argv[1], "wb")
            
     # Wait media assets to load
     print "Preparing media assets"
@@ -90,11 +126,10 @@ try:
         # TODO: how to determine when FF has done rendering
         #time.sleep(0.01)
         data_uri = grab_frame()
-        print "Got frame data:" + str(len(frame))
         
         data = decode_data_uri(data_uri)
-
-
+        
+        print "Wrote frame:" + str(clock) +" total written:" + str(written/ 1000000 ) + "M"
     
 finally:
     print "Shutting down webserver"
