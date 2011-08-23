@@ -55,10 +55,14 @@ def grab_frame():
     """
     val = browser.execute_script("return window.recorder.grabFrame()")
     return val
-        
 
+def decode_data_uri(data_uri):
+    """
+    Return raw bytes payload of data_uri     
+    """        
+    import pdb ; pdb.set_trace()
+    
 print "Winding up Firefox for recording. Press CTRL+C to abort"
-
 
 try:
     browser = webdriver.Firefox() # Get local session of firefox
@@ -85,8 +89,11 @@ try:
         # Let UI loop execute 
         # TODO: how to determine when FF has done rendering
         #time.sleep(0.01)
-        frame = grab_frame()
+        data_uri = grab_frame()
         print "Got frame data:" + str(len(frame))
+        
+        data = decode_data_uri(data_uri)
+
 
     
 finally:

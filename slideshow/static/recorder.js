@@ -169,7 +169,7 @@ $(document).ready(function() {
     window.recorder = recorder;    
     
     recorder.init();
-    recorder.loadSong("static/music/celine.mp3");
+    recorder.loadSong("static/music/flautin.mp3");
     recorder.loadImages(["static/images/coffee.jpg", "static/images/kakku.png"]);
 
     $("button[name=tick]").click(function() {
