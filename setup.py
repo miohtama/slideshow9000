@@ -15,7 +15,10 @@ requires = [
     'zope.sqlalchemy',
     'WebError',
     'pyechonest',
-    'mutagen==1.20'
+    'mutagen==1.20',
+    'odict',
+    'selenium',
+    'pil'
 ]
 
 if sys.version_info[:3] < (2,5,0):

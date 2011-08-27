@@ -9,6 +9,8 @@ PATH:=$(VIRTUAL_ENV)/bin:$(PATH)
 # silly macosx does not necessarily export PATH even if we tell it to :(
 P:=PATH=$(PATH)
 
+$(shell mkdir -p .flags)
+
 export VIRTUAL_ENV
 export PATH
 
