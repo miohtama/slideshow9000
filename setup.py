@@ -18,7 +18,7 @@ requires = [
     'mutagen==1.20',
     'odict',
     'selenium',
-    'pil'
+    'Pillow'
 ]
 
 if sys.version_info[:3] < (2,5,0):

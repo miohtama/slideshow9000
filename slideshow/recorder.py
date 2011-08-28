@@ -99,15 +99,23 @@ def decode_data_uri(data_uri):
 print "Winding up Firefox for recording. Press CTRL+C to abort"
 
 try:
-    browser = webdriver.Firefox() # Get local session of firefox
-    
+    profile = webdriver.firefox.firefox_profile.FirefoxProfile()
+
+    set_pref = profile.set_preference
+    set_pref("signed.applets.codebase_principal_support",    True)
+    set_pref("capability.principal.codebase.p0.granted",     "UniversalXPConnect");
+    set_pref("capability.principal.codebase.p0.id",          "http://localhost:6543");
+    set_pref("capability.principal.codebase.p0.subjectName", "");
+
+    browser = webdriver.Firefox(firefox_profile=profile)
+
     # Assume we are running Pyramid on localhost
     browser.get("http://localhost:6543/recorder") # Load page
     assert "Slideshow Recorder" in browser.title
     
     # Opening FIFO for writing
     stream = open(sys.argv[1], "wb")
-           
+    
     # Wait media assets to load
     print "Preparing media assets"
     while not check_ready():
@@ -117,7 +125,7 @@ try:
     print "Starting recording loop"
     
     clock = 0.0
-    
+
     while not check_done():
         clock += (1.0 / FRAMES_PER_SECOND)
         print "Rendering frame:" + str(clock)

@@ -15,7 +15,14 @@ Recorder.prototype = {
     
     
     init : function() {
-        
+	try {
+		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+	}
+	catch (e) {
+		// TODO better failure mode!
+		document.title = "Recorder failed UniversalXPConnect";
+	}        
+
         slideshow.init();
         
         

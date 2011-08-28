@@ -59,3 +59,4 @@ celine.*
 
 *.jar
 .flags
+.venv-path
