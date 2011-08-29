@@ -5,10 +5,13 @@
 
 """
 
+import os
 import sys
 import subprocess
 import time
 import base64
+import json
+
 from cStringIO import StringIO
 
 from PIL import Image
@@ -41,7 +44,11 @@ def check_ready():
     """
     val = browser.execute_script("return window.recorder.isReady()")
     return val == True
-       
+
+def set_filename(filename):
+    filename = os.path.abspath(filename)
+    browser.execute_script("window.recorder.setOutputFilename(%s)" %
+	json.dumps(filename))
 
 def check_done():
     """ 
@@ -113,6 +120,8 @@ try:
     browser.get("http://localhost:6543/recorder") # Load page
     assert "Slideshow Recorder" in browser.title
     
+    set_filename(sys.argv[1] + ".tmp")
+
     # Opening FIFO for writing
     stream = open(sys.argv[1], "wb")
     
@@ -120,7 +129,7 @@ try:
     print "Preparing media assets"
     while not check_ready():
         time.sleep(1)
-    
+
     # Start recording loop
     print "Starting recording loop"
     
@@ -133,11 +142,10 @@ try:
         # Let UI loop execute 
         # TODO: how to determine when FF has done rendering
         #time.sleep(0.01)
-        data_uri = grab_frame()
+        grab_frame()
         
-        data = decode_data_uri(data_uri)
-        
-        print "Wrote frame:" + str(clock) +" total written:" + str(written/ 1000000 ) + "M"
+        # data = decode_data_uri(data_uri)
+        # print "Wrote frame:" + str(clock) +" total written:" + str(written/ 1000000 ) + "M"
     
 finally:
     print "Shutting down webserver"
