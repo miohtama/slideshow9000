@@ -174,25 +174,35 @@ var Recorder = newConstructor(
         },
         
         grabFrame : UseXPCOM(function() {
+            function convertToByteString(array) {
+                var len = (array.length + 9999) / 10000;
+                var str = '';
+                var f = String.fromCharCode;
+                for (var i = 0; i < len; i++) {
+                    var off = i * 10000;
+                    str += f.apply(null, array.subarray(off, off + 10000));
+                }
+                return str;
+            };
             var canvas = slideshow.canvas;
             
             var ctx = slideshow.ctx;
             var imageData = ctx.getImageData(0, 0, slideshow.width, slideshow.height);
             var data = imageData.data;
-            // var data = canvas.toDataURL();
+            //var data = canvas.toDataURL();
     
-            console.log("got another write");
-            var byteArray = [];
-            var dl = data.length;
-            var f = String.fromCharCode;
-            var byteString = new String('');
-            for (var i = 0; i < dl; i++) {
-                byteString = byteString.concat(f(data[i]))
-            }
+            //console.log("got another write");
+            //var byteArray = [];
+            //var dl = data.length;
+            //var f = String.fromCharCode;
+            //var byteString = new String('');
+            //for (var i = 0; i < dl; i++) {
+            //    byteString = byteString.concat(f(data[i]))
+            //}
 
-            this.stream.writeBytes(byteString, byteString.length);
+            data = convertToByteString(data);
+            this.stream.writeBytes(data, data.length) // byteString, byteString.length);
             //this.stream.write(data, data.length);
-    	    console.log("success");
             //        this.stream.flush();
     
             //var dataURL = canvas.toDataURL("image/png");
