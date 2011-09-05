@@ -4,7 +4,7 @@
     
 
 """
-
+import datetime
 import os
 import sys
 import subprocess
@@ -12,7 +12,6 @@ import time
 import base64
 import json
 import tempfile
-
 from cStringIO import StringIO
 
 from PIL import Image
@@ -31,25 +30,32 @@ class Recorder(object):
     # Output FIFO handle used for saving
     stream = None
 
+    # music file
+    music = 'josh.ogg'
+
+    # the encoder process
+    encoder = None
+
+    # maximum length of recording in seconds
+    max_length = 10
+
     def __init__(self):
-        self.webserv = subprocess.Popen(["paster", "serve", "development.ini"], stdout=sys.stdout)
+        pass
 
     def start_encoding_process(self):
-        music = 'josh.ogg'
         blocksize = self.width * self.height * 4
-        fps = 30
         self.encoder = subprocess.Popen([
             'gst-launch-0.10',
             'filesrc',
             'location=' + self.fifo_path,
             'blocksize=' + str(blocksize),
             '!',
-            'video/x-raw-rgb,bpp=32,endianness=4321,depth=24,red_mask=16711680,green_mask=65280,blue_mask=255,width=%d,height=%d,framerate=%d/1'
-                % (self.width, self.height, fps),
-            '!',
-            'ffmpegcolorspace',
+            'video/x-raw-rgb,bpp=32,endianness=4321,depth=24,red_mask=-16777216,green_mask=16711680,blue_mask=65280,width=%d,height=%d,framerate=%d/1'
+                % (self.width, self.height, int(self.FRAMES_PER_SECOND)),
             '!',
             'queue',
+            '!',
+            'ffmpegcolorspace',
             '!',
             'videorate',
             '!',
@@ -58,7 +64,7 @@ class Recorder(object):
             '!',
             'mux.',
             'filesrc',
-            'location=' + music,
+            'location=' + self.music,
             '!',
             'decodebin',
             '!',
@@ -111,7 +117,10 @@ class Recorder(object):
         res = self.browser.execute_script("return window.recorder.getResolution()")
         self.width = int(res['width'])
         self.height = int(res['height'])
-        return self.width, self.height
+        
+	assert self.width % 8 == 0, "Width is not divisible by 8"
+	assert self.height % 8 == 0, "Height is not divisible by 8"
+	return self.width, self.height
 
     def grab_frame(self):
         self.browser.execute_script("window.recorder.grabFrame()")
@@ -122,7 +131,18 @@ class Recorder(object):
         os.mkfifo(self.fifo_path)
         return self.fifo_path
 
+    def close_stream(self):
+        self.browser.execute_script("window.recorder.closeStream()");
+
     def do_encode(self, output):
+        print "Starting paster"
+        self.webserv = subprocess.Popen(["paster", "serve", "development.ini"], stdout=sys.stdout)
+
+        print "Starting Xvfb at :5"
+        self.xvfb = subprocess.Popen(["Xvfb", ":5", "-screen", "0", "1024x768x24"])
+        
+	os.environ['DISPLAY'] = ':5'
+        
         self.output = output
         self.create_fifo()
 
@@ -145,12 +165,9 @@ class Recorder(object):
 
         self.get_resolution()
         print "Resolution %dx%d" % (self.width, self.height)
-        # Opening FIFO for writing
-        # stream = open(sys.argv[1], "wb")
     
         print "Starting encoder"
         self.start_encoding_process()
-
 
         # Assume we are running Pyramid on localhost
 	print "Setting Javascript output path"
@@ -164,19 +181,37 @@ class Recorder(object):
             print "Rendering frame: %f" % clock
             self.prepare_frame(clock)
             self.grab_frame()
+            if clock > self.max_length:
+                break
+        
+        self.close_stream()
 
     def encode(self, output_file):
-        print "Winding up Firefox for recording. Press CTRL+C to abort"
+        def timeprint(msg):
+            now = datetime.datetime.now().isoformat(' ') 
+            print "[%s] %s" % (now, msg)
+
+        start = time.time()
+        timeprint("Starting recording")
         try:
             self.do_encode(output_file)
 
         finally:
-            print "Shutting down webserver"
+            timeprint("Shutting down webserver")
             self.webserv.terminate();
     
         if self.browser:
-            print "Shutting down browser"
+            timeprint("Shutting down browser")
             self.browser.close()
+
+        if self.encoder:
+            timeprint("Waiting for encoder to finish")
+            rc = self.encoder.wait()
+            timeprint("Encoder exited with code %d - exciting!" % rc)
+         
+        now = datetime.datetime.now().isoformat(' ') 
+        delta = time.time() - start
+        timeprint("Encoding ended - time %f seconds" % delta)
 
 if __name__ == '__main__':
     recorder = Recorder()
