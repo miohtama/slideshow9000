@@ -62,15 +62,15 @@ var Recorder = newConstructor(
         setOutputFilename : UseXPCOM(function(filename) {
             this.outputFilename = filename;
             this.outputFile = Components.classes["@mozilla.org/file/local;1"].
-    	            createInstance(Components.interfaces.nsILocalFile);
+                createInstance(Components.interfaces.nsILocalFile);
     	
             this.outputFile.initWithPath(filename);
     
-            stream = Components.classes["@mozilla.org/network/safe-file-output-stream;1"].
-    	             createInstance(Components.interfaces.nsIFileOutputStream);
+            stream = Components.classes["@mozilla.org/network/file-output-stream;1"].
+    	        createInstance(Components.interfaces.nsIFileOutputStream);
     
             // PR_WRONLY + PR_CREATE_FILE + PR_APPEND, default mode, no behaviour flags
-            stream.init(this.outputFile, 0x02 | 0x08 | 0x10, -1, 0); 
+            stream.init(this.outputFile, 0x02 | 0x10, 00600, false); 
             this.stream = Components.classes["@mozilla.org/binaryoutputstream;1"].
                 createInstance(Components.interfaces.nsIBinaryOutputStream);
     	
@@ -184,33 +184,19 @@ var Recorder = newConstructor(
                 }
                 return str;
             };
-            var canvas = slideshow.canvas;
             
             var ctx = slideshow.ctx;
             var imageData = ctx.getImageData(0, 0, slideshow.width, slideshow.height);
             var data = imageData.data;
-            //var data = canvas.toDataURL();
-    
-            //console.log("got another write");
-            //var byteArray = [];
-            //var dl = data.length;
-            //var f = String.fromCharCode;
-            //var byteString = new String('');
-            //for (var i = 0; i < dl; i++) {
-            //    byteString = byteString.concat(f(data[i]))
-            //}
 
             data = convertToByteString(data);
-            this.stream.writeBytes(data, data.length) // byteString, byteString.length);
-            //this.stream.write(data, data.length);
-            //        this.stream.flush();
-    
-            //var dataURL = canvas.toDataURL("image/png");
-            console.log("Grabbed frame, raw pixel data - " + data.length + " bytes");
-            //console.log(data);
-            return "";    
+            this.stream.writeBytes(data, data.length);
         }),
         
+	getResolution : function() {
+            return { width: slideshow.width, height: slideshow.height };
+        },
+
         prepareFrame : function(clock) {
             this.setClock(clock);
             this.nextTick();        
