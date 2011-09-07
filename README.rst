@@ -161,3 +161,21 @@ Tools
 * http://www.online-convert.com/result/13bdb358a38f203f74217281f9711a1d
 
 * ffmpeg2theora http://v2v.cc/~j/ffmpeg2theora/download.html
+
+* GStreamer: install these:
+
+    gstreamer0.10-ffmpeg
+    gstreamer0.10-fluendo-mp3
+    gstreamer0.10-gnonlin
+    gstreamer0.10-nice
+    gstreamer0.10-plugins-bad
+    gstreamer0.10-plugins-bad-multi
+    gstreamer0.10-plugins-base
+    gstreamer0.10-plugins-base-apps
+    gstreamer0.10-plugins-good
+    gstreamer0.10-plugins-ugly
+    gstreamer0.10-plugins-ugly-mult
+    gstreamer0.10-pulseaudio
+    gstreamer0.10-tools
+    gstreamer0.10-x
+
